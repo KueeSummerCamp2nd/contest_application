@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="main.css">
+    <script src="main.js"></script>
+    <title>2019年度 サマーキャンプ2回生</title>
+</head>
+<body style="font-family:sans-serif">
+  <div class="cp_tab">
+    <input type="radio" name="cp_tab" id="tab1" aria-controls="first_tab" onclick="switch_tab(0)" checked>
+    <label for="tab1">チーム1</label>
+    <input type="radio" name="cp_tab" id="tab2" aria-controls="second_tab" onclick="switch_tab(1)">
+    <label for="tab2">チーム2</label>
+    <input type="radio" name="cp_tab" id="tab3" aria-controls="third_tab" onclick="switch_tab(2)">
+    <label for="tab3">チーム3</label>
+    <input type="radio" name="cp_tab" id="tab4" aria-controls="fourth_tab" onclick="switch_tab(3)">
+    <label for="tab4">チーム4</label>
+    <div class="cp_tabpanels">
+      <div id="first_tab" class="cp_tabpanel"> </div>
+      <div id="second_tab" class="cp_tabpanel"> </div>
+      <div id="third_tab" class="cp_tabpanel"> </div>
+      <div id="fourth_tab" class="cp_tabpanel"> </div>
+    </div>
+  </div>
+  
+  <div id="flex-container">
+      <div id="main_left">
+        <div id="team">
+          <div>
+            チーム名：
+          </div>
+          <div id="team_name"> </div>
+        </div>
+
+        <div id="runner">
+          <div>第　</div>
+          <div id="runner_index"> </div>
+          <div>　走者：</div>
+          <div id="runner_name"> </div>
+        </div>
+      </div>
+      <div id="main_center">
+          <div id="total_score_title">
+            Total score
+          </div>
+          <div id="total_score_value"> </div>
+          
+          <div id="best_score">
+            <div> Best score： </div>
+            <div id="best_score_value"> </div>
+          </div>
+
+          <div id="new_record"> </div>
+
+          <div id="total_time">
+            <div> Total time： </div>
+            <div id="total_time_value"> </div>
+          </div>
+
+          <div class="section">
+            <div> ・Section 1： </div>
+            <div id="section1_time_value"> </div>
+          </div>
+          <div class="section">
+            <div> ・Section 2： </div>
+            <div id="section2_time_value"> </div>
+          </div>
+          <div class="section">
+            <div> ・Section 3： </div>
+            <div id="section3_time_value"> </div>
+          </div>
+      </div>
+  </div>
+
+  
+
+
+
+</body>
+</html>

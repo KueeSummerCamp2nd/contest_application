@@ -1,0 +1,122 @@
+#flex-container {
+	display: flex;
+}
+#main_left {
+	width: 30%;
+	padding: 10pt;
+}
+#team {
+	display: flex;
+	align-items: center;
+}
+#team_name {
+	font-size:48pt;
+}
+#runner {
+	padding-top: 20px;
+	display: flex;
+	align-items: center;
+}
+#runner_index {
+	font-size:24pt;
+}
+#runner_name {
+	font-size:36pt;
+}
+#main_center {
+	text-align:center;
+}
+#total_score_title {
+	font-size: 24pt;
+}
+#total_score_value {
+	font-size: 96pt;
+	background-color: whitesmoke;
+}
+#best_score{
+	padding-top: 12pt;
+	font-size: 30pt;
+	display: flex;
+	justify-content: center;
+}
+#new_record{
+	font-weight: bold;
+	font-size: 24pt;
+	color: blue;
+}
+#total_time{
+	padding-left: 100pt;
+	padding-top: 30pt;
+	font-size: 24pt;
+	display: flex;
+}
+.section {
+	padding-left: 100pt;
+	font-size: 20pt;
+	display: flex;
+}
+#page_title {
+    margin: 10px 15px;
+    font-size: 20px;    /* 文字サイズ指定 */
+    color: rgb(115, 167, 209);     /* 文字色指定 */
+}
+.cp_tab *, .cp_tab *:before, .cp_tab *:after {
+	-webkit-box-sizing: border-box;
+	        box-sizing: border-box;
+}
+.cp_tab {
+	margin: 1em auto;
+}
+.cp_tab > input[type='radio'] {
+	margin: 0;
+	padding: 0;
+	border: none;
+	border-radius: 0;
+	outline: none;
+	background: none;
+	-webkit-appearance: none;
+	        appearance: none;
+	display: none;
+}
+.cp_tab .cp_tabpanel {
+	display: none;
+}
+.cp_tab > input:first-child:checked ~ .cp_tabpanels > .cp_tabpanel:first-child,
+.cp_tab > input:nth-child(3):checked ~ .cp_tabpanels > .cp_tabpanel:nth-child(2),
+.cp_tab > input:nth-child(5):checked ~ .cp_tabpanels > .cp_tabpanel:nth-child(3),
+.cp_tab > input:nth-child(7):checked ~ .cp_tabpanels > .cp_tabpanel:nth-child(4),
+.cp_tab > input:nth-child(9):checked ~ .cp_tabpanels > .cp_tabpanel:nth-child(5),
+.cp_tab > input:nth-child(11):checked ~ .cp_tabpanels > .cp_tabpanel:nth-child(6) {
+	display: block;
+}
+.cp_tab > label {
+	position: relative;
+	display: inline-block;
+	padding: 15px;
+	cursor: pointer;
+	border: 1px solid transparent;
+	border-bottom: 0;
+}
+.cp_tab > label:hover,
+.cp_tab > input:focus + label {
+	color: #0066cc;
+}
+.cp_tab > input:checked + label {
+	margin-bottom: -1px;
+	border-color: #cccccc;
+	border-bottom: 1px solid #ffffff;/*背景色と同じ*/
+	border-radius: 6px 6px 0 0;
+}
+.cp_tab .cp_tabpanel {
+	padding: 0.5em 1em;
+	border-top: 1px solid #cccccc;
+}
+@media (max-width: 480px) {
+	.cp_tab {
+		width: 100%;
+		font-size: 0.8em;
+	}
+	.cp_tab label {
+		padding: 0.5em;
+	}
+}
