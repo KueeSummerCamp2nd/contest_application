@@ -60,6 +60,48 @@
     font-size: 20px;    /* 文字サイズ指定 */
     color: rgb(115, 167, 209);     /* 文字色指定 */
 }
+
+/*ボーナス関係の設定*/
+#bonus_title{
+	font-size:30px;
+}
+.bonus {
+    display: table;
+    width: 100%;
+    background: #FFF;
+}
+.bonus__item {
+    display: table-cell;
+    text-align: center;
+	vertical-align: middle;
+	font-size: 30px;
+}
+.bonus__item + .bonus__item {
+    border-left: 1px solid #CCC;
+}
+.bonus__item a {
+	font-weight: bold;
+    display: block;
+    padding: 15px 0;
+    color: #666;
+    text-decoration: none;
+    font-size: 20px;
+}
+
+/*ボタン関係の設定*/
+button.button4 {
+    font-size: 1em;
+    font-weight: bold;
+    padding: 10px 30px;
+    background-color: #248;
+    color: #fff;
+    border-style: none;
+}
+
+button.button4:hover {
+    background-color: #24d;
+    color: #fff;
+}
 .cp_tab *, .cp_tab *:before, .cp_tab *:after {
 	-webkit-box-sizing: border-box;
 	        box-sizing: border-box;

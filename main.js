@@ -8,6 +8,8 @@ var nowRacing; // 今レースしてるか否か
 var racingTeamIndex; //　今レースしてるチームのインデックス
 var racingRunnerIndex; // 今レースしてる人が何番目かのインデックス
 
+var bonus = [0,0,0,0];
+
 var batonPassTimeList = []; // 各選手のバトンパス時の時間を保存する
 for (var i = 0; i < teamNumber; i++) {
   batonPassTimeList.push(new Array(runnerNumber + 1));
@@ -33,6 +35,7 @@ function switchTab(teamIndex) {
   } else {
     document.getElementById("tab" + String(this.racingTeamIndex + 1)).checked = true;
   }
+  drawInitialBonus()
 }
 
 // 走者の表示切り替え
@@ -209,8 +212,55 @@ function handleKeydown(event) {
 
 window.addEventListener("keydown", handleKeydown);
 
+function reset_bonus(){
+    bonus[displayed_team_index] = 0
+    bonus_to_show = convert_sec_to_min(0)
+    str_to_show = bonus_to_show;
+    var myp = document.getElementById("bonus");
+    myp.innerHTML = str_to_show;
+}
+
+function convert_sec_to_min(time){
+    //秒単位の入力を分に直す 180 -> 3 : 00
+    if (time < 0){
+        sign = "-";
+        time = -time;
+    }else{
+        sign = "+"
+    }
+    min = Math.floor(time/60);
+    if(min<10){
+        min_padding = "0"
+    }else{
+        min_padding = ""
+    }
+    sec = time%60;
+    if(sec<10){
+        sec_padding = "0"
+    }else{
+        sec_padding = ""
+    }
+    return sign+min_padding+String(min)+"."+sec_padding+String(sec)
+}
+
+function alert_bonus(addition) {
+
+    bonus[displayed_team_index] = bonus[displayed_team_index] + addition
+    bonus_to_show = convert_sec_to_min(bonus[displayed_team_index])
+    str_to_show = bonus_to_show;
+    var myp = document.getElementById("bonus");
+    myp.innerHTML = str_to_show;
+}
+
+function drawInitialBonus(){
+    bonus_to_show = convert_sec_to_min(bonus[displayed_team_index])
+    var myp = document.getElementById("bonus");
+    myp.innerHTML = bonus_to_show;
+}
+
 window.onload = function () {
   this.switchTab(0);
   this.nowRacing = false;
   this.drawTime();
+  this.drawInitialBonus();
 }
