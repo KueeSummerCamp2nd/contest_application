@@ -73,9 +73,28 @@
       </div>
   </div>
 
-  
+  <br>
+  <!-- ボーナス表示 -->
+  <center>
+    <ul class="bonus">
+      <li class="bonus__item"><a href="#">ボーナス</a></li>
+      <li class="bonus__item" id="bonus"><a href="#"></a></li>
+    </ul>
 
+  </center>
 
-
+  <!-- ボタン表示 -->
+  <center>
+    <button class="button4" onclick="alert_bonus(-25)">バトンパス</button>
+    <button class="button4" onclick="alert_bonus(-3)">ボーナス小</button>
+    <button class="button4" onclick="alert_bonus(-5)">ボーナス中</button>
+    <button class="button4" onclick="alert_bonus(-10)">ボーナス大</button>
+    <br>
+    <br>
+    <button class="button4" onclick="alert_bonus(60)">リタイヤ</button>
+    <button class="button4" onclick="alert_bonus(5)">ペナルティ中</button>
+    <button class="button4" onclick="alert_bonus(3)">ペナルティ小</button>
+    <button class="button4" onclick="reset_bonus()">リセット</button>
+  </center>
 </body>
 </html>
