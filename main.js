@@ -14,8 +14,13 @@ var nowRacing; // 今レースしてるか否か
 var racingTeamIndex; //　今レースしてるチームのインデックス
 var racingRunnerIndex; // 今レースしてる人が何番目かのインデックス
 
-var bonus = [0,0,0,0];
-var bonus_episode = [[],[
+var bonus = [0, 0, 0, 0];
+var bonus_episode = [
+  [],
+  [],
+  [],
+  []
+]
 
 var batonPassTimeList = []; // 各選手のレース開始時間+バトンパス時の時間を保存する
 for (var i = 0; i < teamNumber; i++) {
@@ -106,7 +111,7 @@ function drawTime() {
   document.getElementById("total_score_value").innerText = convertStrTime(totalTimeLength);
   document.getElementById("total_time_value").innerText = convertStrTime(totalTimeLength);
 
-  document.getElementById("sum_score").innerText = convert_sec_to_min(Math.floor(totalTime/1000) + bonus[racingTeamIndex]);
+  document.getElementById("sum_score").innerText = convert_sec_to_min(Math.floor(totalTimeLength / 1000) + bonus[this.racingTeamIndex]);
 
   for (var i = 0; i < this.runnerNumber; i++) {
     var strSectionTime;
@@ -120,7 +125,7 @@ function drawTime() {
     document.getElementById("section" + String(i + 1) + "_time_value").innerText = strSectionTime;
   }
 
-  document.getElementById("new_record").innerText = ""
+  document.getElementById("new_record").innerText = "";
   if (this.racingRunnerIndex > this.runnerNumber - 1) {
     document.getElementById("total_score_value").style.color = "red";
     document.getElementById("total_time_value").style.fontWeight = "bold";
@@ -144,7 +149,7 @@ function drawTime() {
     document.getElementById("total_score_value").style.color = "black";
     document.getElementById("total_time_value").style.fontWeight = "normal";
 
-  }  
+  }
 
   function convertStrTime(dateTime) {
     var millisec = dateTime.getMilliseconds();
@@ -225,85 +230,85 @@ function handleKeydown(event) {
 
 window.addEventListener("keydown", handleKeydown);
 
-function reset_bonus(){
-    bonus[racingTeamIndex] = 0;
-    bonus_to_show = convert_sec_to_min(0);
-    bonus_episode[racingTeamIndex] = []
-    str_to_show = bonus_to_show;
-    document.getElementById("bonus_episode").innerHTML = "";
-    var myp = document.getElementById("bonus_number");
-    myp.innerHTML = str_to_show;
-    document.getElementById("sum_score").innerText = convert_sec_to_min(Math.floor(0) + bonus[racingTeamIndex]);
+function reset_bonus() {
+  bonus[racingTeamIndex] = 0;
+  bonus_to_show = convert_sec_to_min(0);
+  bonus_episode[racingTeamIndex] = []
+  str_to_show = bonus_to_show;
+  document.getElementById("bonus_episode").innerHTML = "";
+  var myp = document.getElementById("bonus_number");
+  myp.innerHTML = str_to_show;
+  document.getElementById("sum_score").innerText = convert_sec_to_min(Math.floor(0) + bonus[racingTeamIndex]);
 }
 
-function convert_sec_to_min(time){
-    //秒単位の入力を分に直す 180 -> 3 : 00
-    if (time < 0){
-        sign = "-";
-        time = -time;
-    }else{
-        sign = "+";
-    }
-    min = Math.floor(time/60);
-    if(min<10){
-        min_padding = "0";
-    }else{
-        min_padding = "";
-    }
-    sec = time%60;
-    if(sec<10){
-        sec_padding = "0";
-    }else{
-        sec_padding = "";
-    }
-    return sign+min_padding+String(min)+"."+sec_padding+String(sec)
+function convert_sec_to_min(time) {
+  //秒単位の入力を分に直す 180 -> 3 : 00
+  if (time < 0) {
+    sign = "-";
+    time = -time;
+  } else {
+    sign = "+";
+  }
+  min = Math.floor(time / 60);
+  if (min < 10) {
+    min_padding = "0";
+  } else {
+    min_padding = "";
+  }
+  sec = time % 60;
+  if (sec < 10) {
+    sec_padding = "0";
+  } else {
+    sec_padding = "";
+  }
+  return sign + min_padding + String(min) + "." + sec_padding + String(sec)
 }
 
-function print_bonus_episode(addition){
-    bonus_episode[racingTeamIndex].splice(bonus_episode[racingTeamIndex].length, 0, addition);
-    episode = "";
-    for (var i=0;i<bonus_episode[racingTeamIndex].length;i++){
-        episode = episode + bonus_episode[racingTeamIndex][i] + '<br>';
-    }
-    document.getElementById("bonus_episode").innerHTML = episode;
+function print_bonus_episode(addition) {
+  bonus_episode[racingTeamIndex].splice(bonus_episode[racingTeamIndex].length, 0, addition);
+  episode = "";
+  for (var i = 0; i < bonus_episode[racingTeamIndex].length; i++) {
+    episode = episode + bonus_episode[racingTeamIndex][i] + '<br>';
+  }
+  document.getElementById("bonus_episode").innerHTML = episode;
 }
 
-function print_initial_bonus_episode(){
-    document.getElementById("bonus_episode").innerHTML = "";
+function print_initial_bonus_episode() {
+  document.getElementById("bonus_episode").innerHTML = "";
 }
 
-function alert_bonus(addition_score,addition_episode) {
-    print_bonus_episode(addition_episode)
+function alert_bonus(addition_score, addition_episode) {
+  print_bonus_episode(addition_episode)
 
-    var nowTime;
-    var totalTime;
+  var nowTime;
+  var totalTime;
 
-    if (this.batonPassTimeList[this.racingTeamIndex][this.runnerNumber] != void 0) {
-        nowTime = this.batonPassTimeList[this.racingTeamIndex][this.runnerNumber];
-    } else {
-        nowTime = new Date().getTime();
-    }
+  if (this.batonPassTimeList[this.racingTeamIndex][this.runnerNumber] != void 0) {
+    nowTime = this.batonPassTimeList[this.racingTeamIndex][this.runnerNumber];
+  } else {
+    nowTime = new Date().getTime();
+  }
 
-    if (this.batonPassTimeList[this.racingTeamIndex][0] != void 0) {
-        // レース開始以降
-        totalTime= new Date(nowTime - this.batonPassTimeList[this.racingTeamIndex][0]);
-    } else {
-        totalTime = new Date(0);
-    }
+  if (this.batonPassTimeList[this.racingTeamIndex][0] != void 0) {
+    // レース開始以降
+    totalTime = new Date(nowTime - this.batonPassTimeList[this.racingTeamIndex][0]);
+  } else {
+    totalTime = new Date(0);
+  }
 
-    bonus[racingTeamIndex] = bonus[racingTeamIndex] + addition_score;
-    bonus_to_show = convert_sec_to_min(bonus[racingTeamIndex]);
-    str_to_show = bonus_to_show;
-    var myp = document.getElementById("bonus_number");
-    myp.innerHTML = str_to_show;
+  bonus[racingTeamIndex] = bonus[racingTeamIndex] + addition_score;
+  bonus_to_show = convert_sec_to_min(bonus[racingTeamIndex]);
+  str_to_show = bonus_to_show;
+  var myp = document.getElementById("bonus_number");
+  myp.innerHTML = str_to_show;
 
-    document.getElementById("sum_score").innerText = convert_sec_to_min(Math.floor(totalTime/1000) + bonus[racingTeamIndex]);
+  document.getElementById("sum_score").innerText = convert_sec_to_min(Math.floor(totalTime / 1000) + bonus[racingTeamIndex]);
 }
 
-function drawInitialBonus(){
-    bonus_to_show = convert_sec_to_min(bonus[racingTeamIndex]);
-    var myp = document.getElementById("bonus_number");
-    myp.innerHTML = bonus_to_show;
+function drawInitialBonus() {
+  bonus_to_show = convert_sec_to_min(bonus[racingTeamIndex]);
+  var myp = document.getElementById("bonus_number");
+  myp.innerHTML = bonus_to_show;
 }
 
 function makeTabs() {
