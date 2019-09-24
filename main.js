@@ -1,14 +1,8 @@
-var teamNameList = ["TA", "チームhoge", "team_fuga", "noname", "hohge"];
-var runnerNameList = [
-  ["a", "b", "c"],
-  ["d", "e", "f"],
-  ["g", "h", "i"],
-  ["j", "k", "l"],
-  ["j", "k", "l"]
-];
+var teamNameList = [];
+var runnerNameList = [];
 
-var teamNumber = teamNameList.length; //チーム数
-var runnerNumber = runnerNameList[0].length; //1チームの人数
+var teamNumber; //チーム数
+var runnerNumber; //1チームの人数
 
 var nowRacing; // 今レースしてるか否か
 var racingTeamIndex; //　今レースしてるチームのインデックス
@@ -23,9 +17,7 @@ var bonus_episode = [
 ]
 
 var batonPassTimeList = []; // 各選手のレース開始時間+バトンパス時の時間を保存する
-for (var i = 0; i < teamNumber; i++) {
-  batonPassTimeList.push(new Array(runnerNumber + 1));
-}
+var bonusSecondList = [];
 
 var timerId; // タイマー（用途不明）
 
@@ -107,8 +99,7 @@ function drawTime() {
   } else {
     totalTimeLength = new Date(0);
   }
-
-  document.getElementById("total_score_value").innerText = convertStrTime(totalTimeLength);
+  document.getElementById("total_score_value").innerText = convertStrTime(new Date(totalTimeLength - this.bonusSecondList[this.racingTeamIndex] * 1000));
   document.getElementById("total_time_value").innerText = convertStrTime(totalTimeLength);
 
   document.getElementById("sum_score").innerText = convert_sec_to_min(Math.floor(totalTimeLength / 1000) + bonus[this.racingTeamIndex]);
@@ -126,40 +117,48 @@ function drawTime() {
   }
 
   document.getElementById("new_record").innerText = "";
+  var bestScore = Infinity;
+  var bestScoreTeamIndex = this.teamNumber;
+
+  for (var i = 0; i < this.teamNumber; i++) {
+    if ((this.batonPassTimeList[i][0] != void 0) && (this.batonPassTimeList[i][this.runnerNumber] != void 0)) {
+      if (bestScore > new Date(this.batonPassTimeList[i][this.runnerNumber] - this.batonPassTimeList[i][0])) {
+        bestScore = new Date(this.batonPassTimeList[i][this.runnerNumber] - this.batonPassTimeList[i][0]);
+        bestScoreTeamIndex = i;
+      }
+    }
+  }
+  if (bestScore != Infinity) {
+    document.getElementById("best_score_value").innerText = convertStrTime(bestScore);
+  } else {
+    document.getElementById("best_score_value").innerText = "59:59.59";
+  }
   if (this.racingRunnerIndex > this.runnerNumber - 1) {
     document.getElementById("total_score_value").style.color = "red";
     document.getElementById("total_time_value").style.fontWeight = "bold";
 
-    var bestScore = new Date(3599990);
-    var bestScoreTeamIndex = this.teamNumber;
-
-    for (var i = 0; i < this.teamNumber; i++) {
-      if ((this.batonPassTimeList[i][0] != void 0) && (this.batonPassTimeList[i][this.runnerNumber] != void 0)) {
-        if (bestScore > new Date(this.batonPassTimeList[i][this.runnerNumber] - this.batonPassTimeList[i][0])) {
-          bestScore = new Date(this.batonPassTimeList[i][this.runnerNumber] - this.batonPassTimeList[i][0]);
-          bestScoreTeamIndex = i;
-        }
-      }
-    }
-    document.getElementById("best_score_value").innerText = convertStrTime(bestScore);
     if (bestScoreTeamIndex == this.racingTeamIndex) {
       document.getElementById("new_record").innerText = "New Record !"
     }
   } else {
     document.getElementById("total_score_value").style.color = "black";
     document.getElementById("total_time_value").style.fontWeight = "normal";
-
   }
 
   function convertStrTime(dateTime) {
+    var strSign;
+    if (dateTime >= 0) {
+      strSign = "+";
+    } else {
+      dateTime = new Date(0 - dateTime);
+      strSign = "-";
+    }
     var millisec = dateTime.getMilliseconds();
     var sec100 = Math.floor(millisec / 10);
     var sec = dateTime.getSeconds();
     var min = dateTime.getMinutes();
-
     var strTime = "";
     var strSec100, strSec, strMin;
-
     // 数値を文字に変換及び2桁表示設定
     strSec100 = "" + sec100;
     if (strSec100.length < 2) {
@@ -173,62 +172,11 @@ function drawTime() {
     if (strMin.length < 2) {
       strMin = "0" + strMin;
     }
-    strTime = strMin + ":" + strSec + "." + strSec100;
+    strTime = strSign + strMin + ":" + strSec + "." + strSec100;
     return strTime;
   }
 }
 
-
-function handleKeydown(event) {
-  var keyCode = event.keyCode;
-  if (keyCode == 90) {
-    // zキー．正常にバトンパスしたとき
-    if (!this.nowRacing) {
-      if (this.racingRunnerIndex == 0) {
-        // スタート時の処理
-        this.batonPassTimeList[this.racingTeamIndex][0] = new Date().getTime();
-        this.startStopWatch();
-      } else if (this.racingRunnerIndex < this.runnerNumber - 1) {
-        // 中断-再開の処理．未実装
-      }
-    } else {
-      if (this.racingRunnerIndex < this.runnerNumber - 1) {
-        //バトンパスの処理
-        this.batonPass();
-      } else if (this.racingRunnerIndex == this.runnerNumber - 1) {
-        //ゴール時の処理
-        this.batonPass();
-        this.stopStopWatch();
-      }
-    }
-  } else if (keyCode == 13) {
-    // エンターキー．リタイアしたとき
-    if (this.nowRacing) {
-      var nowTime = new Date().getTime();
-      var oneMinute = new Date(60000);
-      if (nowTime - this.batonPassTimeList[this.racingTeamIndex][this.racingRunnerIndex] < oneMinute) {
-        var penaltyTime = new Date(oneMinute - nowTime + this.batonPassTimeList[this.racingTeamIndex][this.racingRunnerIndex]);
-        for (var i = 0; i < this.runnerNumber; i++) {
-          if (this.batonPassTimeList[this.racingTeamIndex][i] != void 0) {
-            this.batonPassTimeList[this.racingTeamIndex][i] = new Date(this.batonPassTimeList[this.racingTeamIndex][i] - penaltyTime);
-          }
-        }
-      }
-      if (this.racingRunnerIndex < this.runnerNumber - 1) {
-        //バトンパスの処理
-        this.batonPass();
-      } else if (this.racingRunnerIndex == this.runnerNumber - 1) {
-        //ゴール時の処理
-        this.batonPass();
-        this.stopStopWatch();
-      }
-    }
-  } else if (keyCode == 88) {
-    // xキー．入力を取り消すとき
-  }
-}
-
-window.addEventListener("keydown", handleKeydown);
 
 function reset_bonus() {
   bonus[racingTeamIndex] = 0;
@@ -311,56 +259,225 @@ function drawInitialBonus() {
   myp.innerHTML = bonus_to_show;
 }
 
-function makeTabs() {
-  var objCpTab = document.getElementById("cp_tab_block");
-  for (var i = 0; i < this.teamNumber; i++) {
-    var inpTabI = document.createElement('input');
-    inpTabI.setAttribute("type", "radio");
-    inpTabI.setAttribute("name", "cp_tab");
-    inpTabI.setAttribute("id", "tab" + String(i + 1));
-    inpTabI.setAttribute("onclick", "switchTab(" + String(i) + ")");
-    if (i == 0) {
-      inpTabI.setAttribute("checked", true);
-    }
-    var labelTabI = document.createElement('label');
-    labelTabI.htmlFor = "tab" + String(i + 1);
-    labelTabI.innerText = this.teamNameList[i];
 
-    objCpTab.appendChild(inpTabI);
-    objCpTab.appendChild(labelTabI);
+function initialSetUp() {
+  importNameLists();
+  this.teamNumber = this.teamNameList.length; //チーム数
+  this.runnerNumber = this.runnerNameList[0].length; //1チームの人数
+  var data = this.csvToArray("data/result.csv");
+  if (data.length) {
+    for (var i = 0; i < this.teamNumber; i++) {
+      this.bonusSecondList.push(0);
+      var batonPassTimeTeamI = [];
+      for (var j = 0; j < this.runnerNumber + 1; j++) {
+        if (data[i][j] == "") {
+          this.batonPassTimeList.push(new Array(this.runnerNumber + 1));
+          break
+        }
+        batonPassTimeTeamI.push(data[i][j]);
+        if (j == this.runnerNumber) {
+          this.batonPassTimeList.push(batonPassTimeTeamI);
+        }
+      }
+    }
+  } else {
+    for (var i = 0; i < this.teamNumber; i++) {
+      this.bonusSecondList.push(0);
+      this.batonPassTimeList.push(new Array(this.runnerNumber + 1));
+
+    }
   }
-  var objCpTabPanels = document.createElement('div');
-  objCpTabPanels.setAttribute("class", "cp_tabpanels");
-  for (var i = 0; i < this.teamNumber; i++) {
-    var objCpTabI = document.createElement('div');
-    objCpTabI.setAttribute("class", "cp_tabpanel");
-    objCpTabPanels.appendChild(objCpTabI);
+  makeTabs();
+  makeSections();
+
+  function importNameLists() {
+    var nameData = this.csvToArray("data/name_register.csv");
+    for (var i = 0; i < nameData.length; i++) {
+      this.teamNameList.push(nameData[i][0]);
+      var runnerNameTeamI = [];
+      for (var j = 1; j < nameData[i].length; j++) {
+        runnerNameTeamI.push(nameData[i][j]);
+      }
+      this.runnerNameList.push(runnerNameTeamI);
+    }
   }
-  objCpTab.appendChild(objCpTabPanels);
+
+  function makeSections() {
+    var objSection = document.getElementById("section_block");
+
+    for (var i = 0; i < this.runnerNumber; i++) {
+      var objSectionI = document.createElement('div');
+      objSectionI.style.display = "flex";
+
+      var objSectionITitle = document.createElement('div');
+      objSectionITitle.innerHTML = "・Section " + String(i + 1) + "：";
+
+      var objSectionITime = document.createElement('div');
+      objSectionITime.id = "section" + String(i + 1) + "_time_value";
+
+      objSectionI.appendChild(objSectionITitle);
+      objSectionI.appendChild(objSectionITime);
+      objSection.appendChild(objSectionI);
+    }
+  }
+
+  function makeTabs() {
+    var objCpTab = document.getElementById("cp_tab_block");
+    for (var i = 0; i < this.teamNumber; i++) {
+      var inpTabI = document.createElement('input');
+      inpTabI.setAttribute("type", "radio");
+      inpTabI.setAttribute("name", "cp_tab");
+      inpTabI.setAttribute("id", "tab" + String(i + 1));
+      inpTabI.setAttribute("onclick", "switchTab(" + String(i) + ")");
+      if (i == 0) {
+        inpTabI.setAttribute("checked", true);
+      }
+      var labelTabI = document.createElement('label');
+      labelTabI.htmlFor = "tab" + String(i + 1);
+      labelTabI.innerText = this.teamNameList[i];
+
+      objCpTab.appendChild(inpTabI);
+      objCpTab.appendChild(labelTabI);
+    }
+    var objCpTabPanels = document.createElement('div');
+    objCpTabPanels.setAttribute("class", "cp_tabpanels");
+    for (var i = 0; i < this.teamNumber; i++) {
+      var objCpTabI = document.createElement('div');
+      objCpTabI.setAttribute("class", "cp_tabpanel");
+      objCpTabPanels.appendChild(objCpTabI);
+    }
+    objCpTab.appendChild(objCpTabPanels);
+  }
 }
 
-window.onload = function () {
-  var objSection = document.getElementById("section_block");
-
-  for (var i = 0; i < this.runnerNumber; i++) {
-    var objSectionI = document.createElement('div');
-    objSectionI.style.display = "flex";
-
-    var objSectionITitle = document.createElement('div');
-    objSectionITitle.innerHTML = "・Section " + String(i + 1) + "：";
-
-    var objSectionITime = document.createElement('div');
-    objSectionITime.id = "section" + String(i + 1) + "_time_value";
-
-    objSectionI.appendChild(objSectionITitle);
-    objSectionI.appendChild(objSectionITime);
-    objSection.appendChild(objSectionI);
-
+// CSVファイル読み込み
+function csvToArray(path) {
+  var csvData = new Array();
+  var data = new XMLHttpRequest();
+  data.open("GET", path, false);
+  data.send(null);
+  var LF = String.fromCharCode(10);
+  var lines = data.responseText.split(LF);
+  for (var i = 0; i < lines.length; ++i) {
+    var cells = lines[i].split(",");
+    if (cells.length != 1) {
+      csvData.push(cells);
+    }
   }
-  this.makeTabs();
+  return csvData;
+}
+//CSVファイルダウンロード
+function downloadArrayToCSV(content, filename) {
+  var formatCSV = '';
+  for (var i = 0; i < content.length; i++) {
+    var value = content[i];
+    var result_i = "";
+    for (var j = 0; j < value.length; j++) {
+      if (value[j] == void 0) {
+        result_i = "";
+        for (var k = 0; k < value.length; k++) {
+          result_i += ","
+        }
+        break;
+      } else {
+        result_i += String(value[j]) + ",";
+      }
+    }
+    formatCSV += result_i;
+    formatCSV += '\n';
+  }
+
+  const anchor = document.createElement('a');
+  if (window.URL && anchor.download !== undefined) {
+    // utf8
+    const bom = '\uFEFF';
+    const blob = new Blob([bom, formatCSV], {
+      type: 'text/csv'
+    });
+    anchor.download = filename;
+
+    // window.URL.createObjectURLを利用
+    // https://developer.mozilla.org/ja/docs/Web/API/URL/createObjectURL
+    anchor.href = window.URL.createObjectURL(blob);
+
+    // これでも可
+    // anchor.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(bom + data);
+
+    // firefoxでは一度addしないと動かない
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.parentNode.removeChild(anchor);
+  }
+}
+
+function handleKeydown(event) {
+  var keyCode = event.keyCode;
+  if (keyCode == 90) {
+    // zキー．正常にバトンパスしたとき
+    if (!this.nowRacing) {
+      if (this.racingRunnerIndex == 0) {
+        // スタート時の処理
+        this.batonPassTimeList[this.racingTeamIndex][0] = new Date().getTime();
+        this.startStopWatch();
+      } else if (this.racingRunnerIndex < this.runnerNumber - 1) {
+        // 中断-再開の処理．未実装
+      }
+    } else {
+      if (this.racingRunnerIndex < this.runnerNumber - 1) {
+        //バトンパスの処理
+        this.batonPass();
+      } else if (this.racingRunnerIndex == this.runnerNumber - 1) {
+        //ゴール時の処理
+        this.batonPass();
+        this.stopStopWatch();
+      }
+    }
+  } else if (keyCode == 13) {
+    // エンターキー．リタイアしたとき
+    if (this.nowRacing) {
+      var nowTime = new Date().getTime();
+      var sectionLimit = 60 * 1000;
+      if (nowTime - this.batonPassTimeList[this.racingTeamIndex][this.racingRunnerIndex] < sectionLimit) {
+        var penalty = sectionLimit - (nowTime - this.batonPassTimeList[this.racingTeamIndex][this.racingRunnerIndex]);
+        for (var i = 0; i < this.runnerNumber; i++) {
+          if (this.batonPassTimeList[this.racingTeamIndex][i] != void 0) {
+            this.batonPassTimeList[this.racingTeamIndex][i] -= penalty;
+          }
+        }
+      }
+      if (this.racingRunnerIndex < this.runnerNumber - 1) {
+        //バトンパスの処理
+        this.batonPass();
+      } else if (this.racingRunnerIndex == this.runnerNumber - 1) {
+        //ゴール時の処理
+        this.batonPass();
+        this.stopStopWatch();
+      }
+    }
+  } else if (keyCode == 88) {
+    // xキー．入力を取り消すとき
+  } else if (keyCode == 67) {
+    // cキー．結果保存
+    if (!this.nowRacing) {
+      this.downloadArrayToCSV(batonPassTimeList, "result.csv");
+    }
+  } else if (keyCode == 86) {
+    // vキー．当画面の結果削除
+    if (!this.nowRacing) {
+      this.batonPassTimeList[this.racingTeamIndex] = new Array(this.runnerNumber + 1);
+      this.racingRunnerIndex = 0;
+      this.drawTime();
+    }
+  }
+}
+
+window.addEventListener("keydown", handleKeydown);
+
+window.onload = function () {
+  this.initialSetUp();
 
   this.switchTab(0);
   this.nowRacing = false;
-  this.drawTime();
+
   this.drawInitialBonus();
 }
