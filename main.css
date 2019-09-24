@@ -10,7 +10,7 @@
 }
 
 #team_name {
-	font-size: 36pt;
+	font-size: 30pt;
 }
 
 #runner {
@@ -29,6 +29,7 @@
 }
 
 #main_center {
+	width: 40%;
 	padding-left: 5pt;
 	text-align: center;
 	display: block;
