@@ -1,8 +1,9 @@
-var teamNameList = ["TA", "チームhoge", "team_fuga", "noname"];
+var teamNameList = ["TA", "チームhoge", "team_fuga", "noname", "hohge"];
 var runnerNameList = [
   ["a", "b", "c"],
   ["d", "e", "f"],
   ["g", "h", "i"],
+  ["j", "k", "l"],
   ["j", "k", "l"]
 ];
 
@@ -170,8 +171,8 @@ function drawTime() {
 
 function handleKeydown(event) {
   var keyCode = event.keyCode;
-  if (keyCode == 32) {
-    // スペースキー．正常にバトンパスしたとき
+  if (keyCode == 90) {
+    // zキー．正常にバトンパスしたとき
     if (!this.nowRacing) {
       if (this.racingRunnerIndex == 0) {
         // スタート時の処理
@@ -212,6 +213,8 @@ function handleKeydown(event) {
         this.stopStopWatch();
       }
     }
+  } else if (keyCode == 88) {
+    // xキー．入力を取り消すとき
   }
 }
 
@@ -263,6 +266,34 @@ function drawInitialBonus() {
   myp.innerHTML = bonus_to_show;
 }
 
+function makeTabs() {
+  var objCpTab = document.getElementById("cp_tab_block");
+  for (var i = 0; i < this.teamNumber; i++) {
+    var inpTabI = document.createElement('input');
+    inpTabI.setAttribute("type", "radio");
+    inpTabI.setAttribute("name", "cp_tab");
+    inpTabI.setAttribute("id", "tab" + String(i + 1));
+    inpTabI.setAttribute("onclick", "switchTab(" + String(i) + ")");
+    if (i == 0) {
+      inpTabI.setAttribute("checked", true);
+    }
+    var labelTabI = document.createElement('label');
+    labelTabI.htmlFor = "tab" + String(i + 1);
+    labelTabI.innerText = this.teamNameList[i];
+
+    objCpTab.appendChild(inpTabI);
+    objCpTab.appendChild(labelTabI);
+  }
+  var objCpTabPanels = document.createElement('div');
+  objCpTabPanels.setAttribute("class", "cp_tabpanels");
+  for (var i = 0; i < this.teamNumber; i++) {
+    var objCpTabI = document.createElement('div');
+    objCpTabI.setAttribute("class", "cp_tabpanel");
+    objCpTabPanels.appendChild(objCpTabI);
+  }
+  objCpTab.appendChild(objCpTabPanels);
+}
+
 window.onload = function () {
   var objSection = document.getElementById("section_block");
 
@@ -281,7 +312,7 @@ window.onload = function () {
     objSection.appendChild(objSectionI);
 
   }
-
+  this.makeTabs();
 
   this.switchTab(0);
   this.nowRacing = false;
