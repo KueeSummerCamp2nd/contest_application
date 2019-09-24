@@ -50,6 +50,19 @@
 	font-size: 24pt;
 	display: flex;
 }
+
+#bonus_episode{
+	padding-left: 100pt;
+	padding-top: 30pt;
+	font-size: 24pt;
+}
+#bonus_title{
+	padding-left: 100pt;
+	padding-top: 30pt;
+	font-size: 24pt;
+}
+
+
 .section {
 	padding-left: 100pt;
 	font-size: 20pt;

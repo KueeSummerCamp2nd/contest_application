@@ -71,6 +71,10 @@
             <div id="section3_time_value"> </div>
           </div>
       </div>
+      <div id = "main_right">
+        <div id="bonus_title">ボーナスリスト</div>
+        <div id="bonus_episode"></div>
+      </div>
   </div>
 
   <br>
@@ -78,23 +82,32 @@
   <center>
     <ul class="bonus">
       <li class="bonus__item"><a href="#">ボーナス</a></li>
-      <li class="bonus__item" id="bonus"><a href="#"></a></li>
+      <li class="bonus__item" id="bonus_number"><a href="#"></a></li>
     </ul>
+
+    <ul class="bonus">
+        <li class="bonus__item"><a href="#">総得点</a></li>
+        <li class="bonus__item" id="sum_score"><a href="#"></a></li>
+      </ul>
 
   </center>
 
   <!-- ボタン表示 -->
   <center>
-    <button class="button4" onclick="alert_bonus(-25)">バトンパス</button>
-    <button class="button4" onclick="alert_bonus(-3)">ボーナス小</button>
-    <button class="button4" onclick="alert_bonus(-5)">ボーナス中</button>
-    <button class="button4" onclick="alert_bonus(-10)">ボーナス大</button>
+    <button class="button4" onclick="alert_bonus(-25, 'バトン特大' )">バトン特大</button>
+    <button class="button4" onclick="alert_bonus(-10, 'バトン中' )">バトン中</button>
+    <button class="button4" onclick="alert_bonus(-5, '停止中' )">停止中</button>
+    <button class="button4" onclick="alert_bonus(-10, '停止大' )">停止大</button>
+    <button class="button4" onclick="alert_bonus(-3, '光反応中' )">光反応中</button>
+    <button class="button4" onclick="alert_bonus(-10, '音反応大' )">音反応大</button>
+
     <br>
     <br>
-    <button class="button4" onclick="alert_bonus(60)">リタイヤ</button>
-    <button class="button4" onclick="alert_bonus(5)">ペナルティ中</button>
-    <button class="button4" onclick="alert_bonus(3)">ペナルティ小</button>
+    <button class="button4" onclick="alert_bonus(25,'リタイヤ' )">リタイヤ</button>
+    <button class="button4" onclick="alert_bonus(5,'コーン中' )">コーン中</button>
+    <button class="button4" onclick="alert_bonus(3,'コーン大' )">コーン大</button>
     <button class="button4" onclick="reset_bonus()">リセット</button>
   </center>
+
 </body>
 </html>
