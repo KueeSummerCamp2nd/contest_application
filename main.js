@@ -8,19 +8,279 @@ var nowRacing; // 今レースしてるか否か
 var racingTeamIndex; //　今レースしてるチームのインデックス
 var racingRunnerIndex; // 今レースしてる人が何番目かのインデックス
 
-var bonus = [0, 0, 0, 0];
-var bonus_episode = [
-  [],
-  [],
-  [],
-  []
-]
-
 var batonPassTimeList = []; // 各選手のレース開始時間+バトンパス時の時間を保存する
-var bonusSecondList = [];
+var bonusElementsList = [];
 
 var timerId; // タイマー（用途不明）
 
+class BonusElements {
+  constructor() {
+    this.section1Option = ""; // stringで"Nothing", "RightReverse", "RightNormal", "CurveReverse", "CurveNormal"のいずれかとする
+    this.section2Option = "";
+    this.section3Option = "";
+    this.coneTouchValue = 0; //int
+    this.coneOverValue = 0;
+    this.batonPass1 = ""; // stringで"Failed", "SmallSuccess", "BigSuccess"のいずれか
+    this.stop1 = ""; // stringで"Failed", "Success"
+    this.responseLightValue = 0;
+    this.responseMusicValue = 0;
+    this.batonPass2 = "";
+    this.stop2 = "";
+    this.stop3 = "";
+    this.bonusSecond = 0;
+  }
+  updateBonusSecond() {
+    var bonusSecond = 0;
+    // 1区画目のパネル変更
+    if (this.section1Option == "Nothing") {} else if (this.section1Option == "RightReverse") {
+      bonusSecond -= 5;
+    } else if (this.section1Option == "RightNormal") {
+      bonusSecond -= 3;
+    } else if (this.section1Option == "CurveReverse") {
+      bonusSecond -= 10;
+    } else if (this.section1Option == "CurveNormal") {
+      bonusSecond -= 5;
+    }
+    // 2区画目のパネル変更
+    if (this.section2Option == "Nothing") {} else if (this.section2Option == "RightReverse") {
+      bonusSecond -= 5;
+    } else if (this.section2Option == "RightNormal") {
+      bonusSecond -= 3;
+    } else if (this.section2Option == "CurveReverse") {
+      bonusSecond -= 10;
+    } else if (this.section2Option == "CurveNormal") {
+      bonusSecond -= 5;
+    }
+    // 3区画目のパネル変更
+    if (this.section3Option == "Nothing") {} else if (this.section3Option == "RightReverse") {
+      bonusSecond -= 5;
+    } else if (this.section3Option == "RightNormal") {
+      bonusSecond -= 3;
+    } else if (this.section3Option == "CurveReverse") {
+      bonusSecond -= 10;
+    } else if (this.section3Option == "CurveNormal") {
+      bonusSecond -= 5;
+    }
+
+    bonusSecond += 3 * this.coneTouchValue;
+    bonusSecond += 5 * this.coneOverValue;
+
+    if (this.batonPass1 == "Failed") {} else if (this.batonPass1 == "SmallSuccess") {
+      bonusSecond -= 5;
+    } else if (this.batonPass1 == "BigSuccess") {
+      bonusSecond -= 25;
+    }
+    if (this.stop1 == "Failed") {} else if (this.stop1 == "Success") {
+      bonusSecond -= 10;
+    }
+
+    bonusSecond -= 5 * this.responseLightValue;
+    bonusSecond -= 10 * this.responseMusicValue;
+
+    if (this.batonPass2 == "Failed") {} else if (this.batonPass2 == "SmallSuccess") {
+      bonusSecond -= 5;
+    } else if (this.batonPass2 == "BigSuccess") {
+      bonusSecond -= 25;
+    }
+    if (this.stop2 == "Failed") {} else if (this.stop2 == "Success") {
+      bonusSecond -= 10;
+    }
+
+    if (this.stop3 == "Failed") {} else if (this.stop3 == "Success") {
+      bonusSecond -= 10;
+    }
+    this.bonusSecond = bonusSecond;
+    document.getElementById("cone_touch_value").innerText = String(this.coneTouchValue);
+    document.getElementById("cone_over_value").innerText = String(this.coneOverValue);
+    document.getElementById("response_light_value").innerText = String(this.responseLightValue);
+    document.getElementById("response_music_value").innerText = String(this.responseMusicValue);
+
+    this.drawTime();
+  }
+}
+
+function pressSection1Option0() {
+  this.bonusElementsList[this.racingTeamIndex].section1Option = "Nothing";
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressSection1Option1() {
+  this.bonusElementsList[this.racingTeamIndex].section1Option = "RightReverse";
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressSection1Option2() {
+  this.bonusElementsList[this.racingTeamIndex].section1Option = "RightNormal";
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressSection1Option3() {
+  this.bonusElementsList[this.racingTeamIndex].section1Option = "CurveReverse";
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressSection1Option4() {
+  this.bonusElementsList[this.racingTeamIndex].section1Option = "CurveNormal";
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressSection2Option0() {
+  this.bonusElementsList[this.racingTeamIndex].section2Option = "Nothing";
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressSection2Option1() {
+  this.bonusElementsList[this.racingTeamIndex].section2Option = "RightReverse";
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressSection2Option2() {
+  this.bonusElementsList[this.racingTeamIndex].section2Option = "RightNormal";
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressSection2Option3() {
+  this.bonusElementsList[this.racingTeamIndex].section2Option = "CurveReverse";
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressSection2Option4() {
+  this.bonusElementsList[this.racingTeamIndex].section2Option = "CurveNormal";
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressSection3Option0() {
+  this.bonusElementsList[this.racingTeamIndex].section3Option = "Nothing";
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressSection3Option1() {
+  this.bonusElementsList[this.racingTeamIndex].section3Option = "RightReverse";
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressSection3Option2() {
+  this.bonusElementsList[this.racingTeamIndex].section3Option = "RightNormal";
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressSection3Option3() {
+  this.bonusElementsList[this.racingTeamIndex].section3Option = "CurveReverse";
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressSection3Option4() {
+  this.bonusElementsList[this.racingTeamIndex].section3Option = "CurveNormal";
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressConeTouchMinus() {
+  if (this.bonusElementsList[this.racingTeamIndex].coneTouchValue > 0) {
+    this.bonusElementsList[this.racingTeamIndex].coneTouchValue -= 1;
+    this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+  }
+}
+
+function pressConeTouchPlus() {
+  this.bonusElementsList[this.racingTeamIndex].coneTouchValue += 1;
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressConeOverMinus() {
+  if (this.bonusElementsList[this.racingTeamIndex].coneOverValue > 0) {
+    this.bonusElementsList[this.racingTeamIndex].coneOverValue -= 1;
+    this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+  }
+}
+
+function pressConeOverPlus() {
+  this.bonusElementsList[this.racingTeamIndex].coneOverValue += 1;
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressBatonpass1Failed() {
+  this.bonusElementsList[this.racingTeamIndex].batonPass1 = "Failed";
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressBatonpass1SmallSuccess() {
+  this.bonusElementsList[this.racingTeamIndex].batonPass1 = "SmallSuccess";
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressBatonpass1BigSuccess() {
+  this.bonusElementsList[this.racingTeamIndex].batonPass1 = "BigSuccess";
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressStop1Failed() {
+  this.bonusElementsList[this.racingTeamIndex].stop1 = "Failed";
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressStop1Success() {
+  this.bonusElementsList[this.racingTeamIndex].stop1 = "Success";
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressResponseLightMinus() {
+  if (this.bonusElementsList[this.racingTeamIndex].responseLightValue > 0) {
+    this.bonusElementsList[this.racingTeamIndex].responseLightValue -= 1;
+    this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+  }
+}
+
+function pressResponseLightPlus() {
+  this.bonusElementsList[this.racingTeamIndex].responseLightValue += 1;
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressResponseMusicMinus() {
+  if (this.bonusElementsList[this.racingTeamIndex].responseMusicValue > 0) {
+    this.bonusElementsList[this.racingTeamIndex].responseMusicValue -= 1;
+    this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+  }
+}
+
+function pressResponseMusicPlus() {
+  this.bonusElementsList[this.racingTeamIndex].responseMusicValue += 1;
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressBatonpass2Failed() {
+  this.bonusElementsList[this.racingTeamIndex].batonPass2 = "Failed";
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressBatonpass2SmallSuccess() {
+  this.bonusElementsList[this.racingTeamIndex].batonPass2 = "SmallSuccess";
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressBatonpass2BigSuccess() {
+  this.bonusElementsList[this.racingTeamIndex].batonPass2 = "BigSuccess";
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressStop2Failed() {
+  this.bonusElementsList[this.racingTeamIndex].stop2 = "Failed";
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressStop2Success() {
+  this.bonusElementsList[this.racingTeamIndex].stop2 = "Success";
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressStop3Failed() {
+  this.bonusElementsList[this.racingTeamIndex].stop3 = "Failed";
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
+
+function pressStop3Success() {
+  this.bonusElementsList[this.racingTeamIndex].stop3 = "Success";
+  this.bonusElementsList[this.racingTeamIndex].updateBonusSecond();
+}
 // タブの切り替え
 // レース中以外のみ切替可能
 function switchTab(teamIndex) {
@@ -39,8 +299,6 @@ function switchTab(teamIndex) {
   } else {
     document.getElementById("tab" + String(this.racingTeamIndex + 1)).checked = true;
   }
-  drawInitialBonus()
-  print_initial_bonus_episode()
 }
 
 // 走者の表示切り替え
@@ -99,10 +357,9 @@ function drawTime() {
   } else {
     totalTimeLength = new Date(0);
   }
-  document.getElementById("total_score_value").innerText = convertStrTime(new Date(totalTimeLength - this.bonusSecondList[this.racingTeamIndex] * 1000));
+  document.getElementById("total_score_value").innerText = convertStrTime(new Date(totalTimeLength - new Date(-this.bonusElementsList[this.racingTeamIndex].bonusSecond * 1000)));
   document.getElementById("total_time_value").innerText = convertStrTime(totalTimeLength);
 
-  document.getElementById("sum_score").innerText = convert_sec_to_min(Math.floor(totalTimeLength / 1000) + bonus[this.racingTeamIndex]);
 
   for (var i = 0; i < this.runnerNumber; i++) {
     var strSectionTime;
@@ -138,7 +395,7 @@ function drawTime() {
     document.getElementById("total_time_value").style.fontWeight = "bold";
 
     if (bestScoreTeamIndex == this.racingTeamIndex) {
-      document.getElementById("new_record").innerText = "New Record !"
+      document.getElementById("new_record").innerText = "Best Record !"
     }
   } else {
     document.getElementById("total_score_value").style.color = "black";
@@ -178,88 +435,6 @@ function drawTime() {
 }
 
 
-function reset_bonus() {
-  bonus[racingTeamIndex] = 0;
-  bonus_to_show = convert_sec_to_min(0);
-  bonus_episode[racingTeamIndex] = []
-  str_to_show = bonus_to_show;
-  document.getElementById("bonus_episode").innerHTML = "";
-  var myp = document.getElementById("bonus_number");
-  myp.innerHTML = str_to_show;
-  document.getElementById("sum_score").innerText = convert_sec_to_min(Math.floor(0) + bonus[racingTeamIndex]);
-}
-
-function convert_sec_to_min(time) {
-  //秒単位の入力を分に直す 180 -> 3 : 00
-  if (time < 0) {
-    sign = "-";
-    time = -time;
-  } else {
-    sign = "+";
-  }
-  min = Math.floor(time / 60);
-  if (min < 10) {
-    min_padding = "0";
-  } else {
-    min_padding = "";
-  }
-  sec = time % 60;
-  if (sec < 10) {
-    sec_padding = "0";
-  } else {
-    sec_padding = "";
-  }
-  return sign + min_padding + String(min) + "." + sec_padding + String(sec)
-}
-
-function print_bonus_episode(addition) {
-  bonus_episode[racingTeamIndex].splice(bonus_episode[racingTeamIndex].length, 0, addition);
-  episode = "";
-  for (var i = 0; i < bonus_episode[racingTeamIndex].length; i++) {
-    episode = episode + bonus_episode[racingTeamIndex][i] + '<br>';
-  }
-  document.getElementById("bonus_episode").innerHTML = episode;
-}
-
-function print_initial_bonus_episode() {
-  document.getElementById("bonus_episode").innerHTML = "";
-}
-
-function alert_bonus(addition_score, addition_episode) {
-  print_bonus_episode(addition_episode)
-
-  var nowTime;
-  var totalTime;
-
-  if (this.batonPassTimeList[this.racingTeamIndex][this.runnerNumber] != void 0) {
-    nowTime = this.batonPassTimeList[this.racingTeamIndex][this.runnerNumber];
-  } else {
-    nowTime = new Date().getTime();
-  }
-
-  if (this.batonPassTimeList[this.racingTeamIndex][0] != void 0) {
-    // レース開始以降
-    totalTime = new Date(nowTime - this.batonPassTimeList[this.racingTeamIndex][0]);
-  } else {
-    totalTime = new Date(0);
-  }
-
-  bonus[racingTeamIndex] = bonus[racingTeamIndex] + addition_score;
-  bonus_to_show = convert_sec_to_min(bonus[racingTeamIndex]);
-  str_to_show = bonus_to_show;
-  var myp = document.getElementById("bonus_number");
-  myp.innerHTML = str_to_show;
-
-  document.getElementById("sum_score").innerText = convert_sec_to_min(Math.floor(totalTime / 1000) + bonus[racingTeamIndex]);
-}
-
-function drawInitialBonus() {
-  bonus_to_show = convert_sec_to_min(bonus[racingTeamIndex]);
-  var myp = document.getElementById("bonus_number");
-  myp.innerHTML = bonus_to_show;
-}
-
-
 function initialSetUp() {
   importNameLists();
   this.teamNumber = this.teamNameList.length; //チーム数
@@ -267,7 +442,6 @@ function initialSetUp() {
   var data = this.csvToArray("data/result.csv");
   if (data.length) {
     for (var i = 0; i < this.teamNumber; i++) {
-      this.bonusSecondList.push(0);
       var batonPassTimeTeamI = [];
       for (var j = 0; j < this.runnerNumber + 1; j++) {
         if (data[i][j] == "") {
@@ -282,13 +456,15 @@ function initialSetUp() {
     }
   } else {
     for (var i = 0; i < this.teamNumber; i++) {
-      this.bonusSecondList.push(0);
       this.batonPassTimeList.push(new Array(this.runnerNumber + 1));
-
     }
   }
   makeTabs();
   makeSections();
+
+  for (var i = 0; i < this.teamNumber; i++) {
+    this.bonusElementsList.push(new BonusElements());
+  }
 
   function importNameLists() {
     var nameData = this.csvToArray("data/name_register.csv");
@@ -479,5 +655,4 @@ window.onload = function () {
   this.switchTab(0);
   this.nowRacing = false;
 
-  this.drawInitialBonus();
 }
