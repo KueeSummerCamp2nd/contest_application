@@ -8,14 +8,22 @@ var nowRacing; // 今レースしてるか否か
 var racingTeamIndex; //　今レースしてるチームのインデックス
 var racingRunnerIndex; // 今レースしてる人が何番目かのインデックス
 
-var batonPassTimeList = []; // 各選手のレース開始時間+バトンパス時の時間を保存する
+// 各プレイヤーがスタートした（=二番目以降のプレイヤーはバトンパスした）時間を記録
+var batonPassTimeList = [];
+
 var bonusElementsList = [];
 
-var timerId; // タイマー（用途不明）
+// ストップウォッチ関連は次のHPを参考にコピペしました．
+// https://qiita.com/ryomaDsakamoto/items/c49a9d4cd2017405af1b
+// よく分かってない部分もありながら実装したのでご了承ください．
+var timerId;
+
 
 class BonusElements {
   constructor() {
-    this.section1Option = ""; // stringで"Nothing", "RightReverse", "RightNormal", "CurveReverse", "CurveNormal"のいずれかとする
+    this.section1Option = "";
+    // stringで"Nothing", "RightReverse", "RightNormal", "CurveReverse", "CurveNormal"のいずれかとする
+    //つまりhtmlのsection1_optionYのYに対応．クラス作ったほうが良かったかも...
     this.section2Option = "";
     this.section3Option = "";
     this.coneTouchValue = 0; //int
@@ -50,7 +58,7 @@ class BonusElements {
 
   updateBonusSecond() {
     var bonusSecond = 0;
-    // 1区画目のパネル変更
+    // 区画ごとのパネル変更のボーナス．
     if (this.section1Option == "Nothing") {} else if (this.section1Option == "RightReverse") {
       bonusSecond -= 5;
     } else if (this.section1Option == "RightNormal") {
@@ -60,7 +68,6 @@ class BonusElements {
     } else if (this.section1Option == "CurveNormal") {
       bonusSecond -= 5;
     }
-    // 2区画目のパネル変更
     if (this.section2Option == "Nothing") {} else if (this.section2Option == "RightReverse") {
       bonusSecond -= 5;
     } else if (this.section2Option == "RightNormal") {
@@ -70,7 +77,6 @@ class BonusElements {
     } else if (this.section2Option == "CurveNormal") {
       bonusSecond -= 5;
     }
-    // 3区画目のパネル変更
     if (this.section3Option == "Nothing") {} else if (this.section3Option == "RightReverse") {
       bonusSecond -= 5;
     } else if (this.section3Option == "RightNormal") {
@@ -81,9 +87,11 @@ class BonusElements {
       bonusSecond -= 5;
     }
 
+    // コーンに触れた回数・倒した回数のペナルティ
     bonusSecond += 3 * this.coneTouchValue;
     bonusSecond += 5 * this.coneOverValue;
 
+    // 1回目のバトンパスボーナス
     if (this.batonPass1 == "Failed") {} else if (this.batonPass1 == "SmallSuccess") {
       bonusSecond -= 5;
     } else if (this.batonPass1 == "BigSuccess") {
@@ -93,9 +101,11 @@ class BonusElements {
       bonusSecond -= 10;
     }
 
+    // アクション区間のボーナス
     bonusSecond -= 5 * this.responseLightValue;
     bonusSecond -= 10 * this.responseMusicValue;
 
+    // 2回目のバトンパスボーナス
     if (this.batonPass2 == "Failed") {} else if (this.batonPass2 == "SmallSuccess") {
       bonusSecond -= 5;
     } else if (this.batonPass2 == "BigSuccess") {
@@ -105,19 +115,28 @@ class BonusElements {
       bonusSecond -= 10;
     }
 
+    // 3回目のバトンパスボーナス
     if (this.stop3 == "Failed") {} else if (this.stop3 == "Success") {
       bonusSecond -= 10;
     }
+
     this.bonusSecond = bonusSecond;
+
+    // コーン触れた回数とかをhtmlに反映．
+    // なんでこの処理をここでやってるのかは...忘れました
     document.getElementById("cone_touch_value").innerText = String(this.coneTouchValue);
     document.getElementById("cone_over_value").innerText = String(this.coneOverValue);
     document.getElementById("response_light_value").innerText = String(this.responseLightValue);
     document.getElementById("response_music_value").innerText = String(this.responseMusicValue);
 
+    // ボーナス点を加算して時刻を表示
     drawTime();
   }
 }
 
+// ここから地獄のように関数を定義
+// というのも各ボタンに1つずつ関数を割り当ててるため．
+// 改善求む
 function pressSection1Option0() {
   bonusElementsList[racingTeamIndex].section1Option = "Nothing";
   bonusElementsList[racingTeamIndex].updateBonusSecond();
@@ -300,8 +319,10 @@ function pressStop3Success() {
   bonusElementsList[racingTeamIndex].stop3 = "Success";
   bonusElementsList[racingTeamIndex].updateBonusSecond();
 }
+// 地獄の関数定義ここまで
+
 // タブの切り替え
-// レース中以外のみ切替可能
+// レース中にチームが切り替わることはないので，レース中以外のみ切替可能とする
 function switchTab(teamIndex) {
   if (!nowRacing) {
     racingRunnerIndex = runnerNumber;
@@ -321,19 +342,6 @@ function switchTab(teamIndex) {
   bonusElementsList[teamIndex].updateBonusSecond();
 }
 
-// 走者の表示切り替え
-// ゴール後はracingRunnerIndexがrunnerNumberと一致するので，displayedRacingRunnerIndexに補正
-function switchRunner() {
-  var displayedRacingRunnerIndex;
-  if (racingRunnerIndex > runnerNumber - 1) {
-    displayedRacingRunnerIndex = runnerNumber - 1;
-  } else {
-    displayedRacingRunnerIndex = racingRunnerIndex;
-  }
-  document.getElementById("runner_index").innerText = String(displayedRacingRunnerIndex + 1);
-  document.getElementById("runner_name").innerText = runnerNameList[racingTeamIndex][displayedRacingRunnerIndex];
-}
-
 // バトンパスの処理
 // 実装上，最後のゴールもバトンパスしたとみなす
 function batonPass() {
@@ -342,8 +350,20 @@ function batonPass() {
   switchRunner();
 }
 
-// タイマー関連
-// よくわからない
+// 走者の表示切り替え
+function switchRunner() {
+  var displayedRacingRunnerIndex;
+  if (racingRunnerIndex > runnerNumber - 1) {
+    displayedRacingRunnerIndex = runnerNumber - 1;
+  } else {
+    // バトンパスした結果，走者の順目が走者数より多い => 最後の走者がゴールした
+    displayedRacingRunnerIndex = racingRunnerIndex;
+  }
+  document.getElementById("runner_index").innerText = String(displayedRacingRunnerIndex + 1);
+  document.getElementById("runner_name").innerText = runnerNameList[racingTeamIndex][displayedRacingRunnerIndex];
+}
+
+// タイマー関連のコピペ
 function startStopWatch() {
   nowRacing = true;
   timerId = setTimeout(runStopWatch, 10);
@@ -360,20 +380,22 @@ function runStopWatch() {
   timerId = setTimeout(runStopWatch, 10);
 }
 
-// 時間関係をすべて描写する関数
+// 時間関係を描写する関数
 function drawTime() {
   var nowTime; // いまの時間
   var totalTimeLength; //レースが開始してからの時間の長さ
 
-
   if (batonPassTimeList[racingTeamIndex][runnerNumber] != void 0) {
+    // batonPassTimeList[racingTeamIndex][runnerNumber]は，runnerNumber + 1番目のセクションが終了すると埋まる
+    // 埋まってれば，時刻を測る必要ない
     nowTime = batonPassTimeList[racingTeamIndex][runnerNumber];
   } else {
     nowTime = new Date().getTime();
   }
 
   if (batonPassTimeList[racingTeamIndex][0] != void 0) {
-    // レース開始以降
+    // batonPassTimeList[racingTeamIndex][0]は，レースを開始した時刻
+    // 現在の時刻からbatonPassTimeList[racingTeamIndex][0]を引いた長さが，レースを開始してからの長さ
     totalTimeLength = new Date(nowTime - batonPassTimeList[racingTeamIndex][0]);
   } else {
     totalTimeLength = new Date(0);
@@ -381,6 +403,7 @@ function drawTime() {
   document.getElementById("total_score_value").innerText = convertStrTime(new Date(totalTimeLength - new Date(-bonusElementsList[racingTeamIndex].bonusSecond * 1000)));
   document.getElementById("total_time_value").innerText = convertStrTime(totalTimeLength);
 
+  // 各セクションでの時間の長さを計算して描写
   for (var i = 0; i < runnerNumber; i++) {
     var strSectionTime;
     if ((batonPassTimeList[racingTeamIndex][i] != void 0) && (batonPassTimeList[racingTeamIndex][i + 1] != void 0)) {
@@ -393,6 +416,7 @@ function drawTime() {
     document.getElementById("section" + String(i + 1) + "_time_value").innerText = strSectionTime;
   }
 
+  // Best Record!と表示するか
   document.getElementById("new_record").innerText = "";
   var bestScore = Infinity;
   var bestScoreTeamIndex = teamNumber;
@@ -408,7 +432,7 @@ function drawTime() {
   if (bestScore != Infinity) {
     document.getElementById("best_score_value").innerText = convertStrTime(bestScore);
   } else {
-    document.getElementById("best_score_value").innerText = "59:59.59";
+    document.getElementById("best_score_value").innerText = "+99:99.99";
   }
   if (racingRunnerIndex > runnerNumber - 1) {
     document.getElementById("total_score_value").style.color = "red";
@@ -422,6 +446,7 @@ function drawTime() {
     document.getElementById("total_time_value").style.fontWeight = "normal";
   }
 
+  // 時刻をStringに変換
   function convertStrTime(dateTime) {
     var strSign;
     if (dateTime >= 0) {
@@ -454,13 +479,21 @@ function drawTime() {
   }
 }
 
-
+// 初期セットアップ
 function initialSetUp() {
+  // チーム名と参加者の名前を読み取り
   importNameLists();
   teamNumber = teamNameList.length; //チーム数
-  runnerNumber = runnerNameList[0].length; //1チームの人数
+  runnerNumber = runnerNameList[0].length; //1チームの人数 
+  // この2つは変わっても大丈夫（とはいえ，UI的に1チーム3人だろうが...）
+
+  // 各プレイヤーのスタート時間読み取り
+  // この目的は，ファイルを保存した後であれば，ブラウザを閉じても，同じ画面を表示させるため
+  // ダウンロードしたcsvファイルは./dataフォルダ内に入れておくこと
   var timeData = csvToArray("data/result_time.csv");
+
   if (timeData.length) {
+    // csvファイルが存在したなら，そのcsvファイルからbatonPassTimeListを復旧
     for (var i = 0; i < teamNumber; i++) {
       var batonPassTimeTeamI = [];
       for (var j = 0; j < runnerNumber + 1; j++) {
@@ -475,13 +508,18 @@ function initialSetUp() {
       }
     }
   } else {
+    // なかったなら，batonPassTimeListを初期化
     for (var i = 0; i < teamNumber; i++) {
       batonPassTimeList.push(new Array(runnerNumber + 1));
     }
   }
+
   makeTabs();
   makeSections();
 
+  // ボーナス情報も読み取り
+  // !!注意!! 読み取って内部変数は変更しているのだが，htmlの見た目には反映されてない
+  // 反映処理を書けばいいのだろうが，分からなかった...
   var stateData = csvToArray("data/result_state.csv");
   for (var i = 0; i < teamNumber; i++) {
     var bonusElementsTeamI = new BonusElements();
@@ -514,6 +552,7 @@ function initialSetUp() {
     }
   }
 
+  // htmlの・Section: Xを書き換え
   function makeSections() {
     var objSection = document.getElementById("section_block");
 
@@ -533,6 +572,8 @@ function initialSetUp() {
     }
   }
 
+  // htmlのタブ部分
+  // どっかのページをコピペしたんですが忘れました！
   function makeTabs() {
     var objCpTab = document.getElementById("cp_tab_block");
     for (var i = 0; i < teamNumber; i++) {
@@ -578,7 +619,9 @@ function csvToArray(path) {
   }
   return csvData;
 }
-//CSVファイルダウンロード
+
+// CSVファイルダウンロード(Chromeのみ)
+// https://ryotah.hatenablog.com/entry/2017/03/22/211227 のコピペ
 function downloadArrayToCSV(content, filename) {
   var formatCSV = '';
   for (var i = 0; i < content.length; i++) {
@@ -622,17 +665,18 @@ function downloadArrayToCSV(content, filename) {
   }
 }
 
+// キーを押したときのイベントを登録
 function handleKeydown(event) {
   var keyCode = event.keyCode;
   if (keyCode == 90) {
-    // zキー．正常にバトンパスしたとき
+    // zキー．これはバトンパスしたときに押す
     if (!nowRacing) {
       if (racingRunnerIndex == 0) {
         // スタート時の処理
         batonPassTimeList[racingTeamIndex][0] = new Date().getTime();
         startStopWatch();
       } else if (racingRunnerIndex < runnerNumber - 1) {
-        // 中断-再開の処理．未実装
+        // 中断状態を再開する処理となるべきだが，未実装
       }
     } else {
       if (racingRunnerIndex < runnerNumber - 1) {
@@ -644,11 +688,14 @@ function handleKeydown(event) {
         stopStopWatch();
       }
     }
-  } else if (keyCode == 66) {
-    // bキー．リタイアしたとき
+  } else if (keyCode == 65) {
+    // aキー．これはリタイアしたときに押す
     if (nowRacing) {
       var nowTime = new Date().getTime();
-      var sectionLimit = 60 * 1000;
+      // 1セクションあたりの最大時間は90秒とする
+      // 90秒以内にリタイアしたなら，その差分をペナルティとする
+      // 実装としては，これまでのプレイヤーのスタート時間からペナルティ分を引く
+      var sectionLimit = 90 * 1000;
       if (nowTime - batonPassTimeList[racingTeamIndex][racingRunnerIndex] < sectionLimit) {
         var penalty = sectionLimit - (nowTime - batonPassTimeList[racingTeamIndex][racingRunnerIndex]);
         for (var i = 0; i < runnerNumber; i++) {
@@ -666,10 +713,10 @@ function handleKeydown(event) {
         stopStopWatch();
       }
     }
-  } else if (keyCode == 88) {
-    // xキー．入力を取り消すとき
   } else if (keyCode == 67) {
-    // cキー．結果保存
+    // cキー．これは結果を保存したいときに押す
+    // ボーナスと各プレイヤーのスタート時間がcsv形式でダウンロードされる
+    // ダウンロードしたcsvファイルは./dataフォルダ内に入れておくこと
     if (!nowRacing) {
       var arr = [];
       for (var i = 0; i < teamNumber; i++) {
@@ -678,22 +725,32 @@ function handleKeydown(event) {
       downloadArrayToCSV(arr, "result_state.csv");
       downloadArrayToCSV(batonPassTimeList, "result_time.csv");
     }
-  } else if (keyCode == 86) {
-    // vキー．当画面の結果削除
+  } else if (keyCode == 27) {
+    // escキー．当画面の結果を削除したいときに押す
     if (!nowRacing) {
       batonPassTimeList[racingTeamIndex] = new Array(runnerNumber + 1);
       racingRunnerIndex = 0;
       bonusElementsList[racingTeamIndex].initialize();
+      switchTab(racingTeamIndex);
+    }
+  } else if (keyCode == 88) {
+    // xキー．これはzキーの動作をやり直したいときに押す
+    // ただし，間違ってリタイアした，あるいはゴールした場合は復旧不可の実装となっております
+    if ((racingRunnerIndex > 0) && (nowRacing)) {
+      batonPassTimeList[racingTeamIndex][racingRunnerIndex] = undefined;
+      racingRunnerIndex -= 1;
+      switchRunner();
     }
   }
 }
 
+// キーを押すイベントを登録
 window.addEventListener("keydown", handleKeydown);
 
+// htmlを読み込むと実行
 window.onload = function () {
   initialSetUp();
 
   switchTab(0);
   nowRacing = false;
-
 }
