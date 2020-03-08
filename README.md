@@ -2,13 +2,13 @@
 
 HTMLもJavaScriptも一切知らない不肖TamagoTorisugiが3日で書いたもので，読みにくい・分かりにくい箇所が多々あると思いますがご了承ください．
 
-####動作環境
+#### 動作環境
 VSCodeとGoogle Chromeで動作確認しています．
 VSCodeでhtmlを見る手順は https://qiita.com/84zume/items/476a29264fdc98d98201 を参考にしてください，
 
 
 
-####準備
+#### 準備
 
 dataフォルダ下に，name_register.csvを置く．
 name_register.csvは，各チームの名前と各レーサーの名前を書く．
@@ -20,7 +20,7 @@ name_register.csvは，各チームの名前と各レーサーの名前を書く
 
 
 
-####キーボード操作
+#### キーボード操作
 vimium等のプラグインは無効化しておいてください．
 
 * zキー：レースが開始したとき，バトンパスしたとき，終了したとき
