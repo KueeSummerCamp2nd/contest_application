@@ -48,12 +48,16 @@
       </div>
     </div>
 
+    <!--ここから右側部分-->
     <div id="main_right">
       <div id="section_option_block">
         <div id="section1_option" class="btn-group btn-group-toggle" data-toggle="buttons">
           <div>
             Section 1
           </div>
+          <!--どのセクション（X）でどのパネル(Y)を取り替えたかをsectionX_optionYで管理．
+            クリックされると関数pressSectionXOptionY()が実行．
+            変数をhtmlに書く方法が思いつかなかったので無理矢理このように実装しましたが，非効率的だと思うので誰か直してください...-->
           <label class="btn btn-light btn-s" onclick="pressSection1Option0()">
             <input type="radio" name="options" id="section1_option0" autocomplete="off">　入れ替えなし
           </label>
@@ -71,6 +75,8 @@
           </label>
         </div>
 
+        <!--以下同じことをSection2，Section3でやる．
+            これ作るのに時間がなかったんです許してください-->
         <div id="section2_option" class="btn-group btn-group-toggle" data-toggle="buttons">
           <div>
             Section 2
@@ -123,11 +129,14 @@
           <div>
             ・コーンに触れた回数：
           </div>
+          <!--マイナスのボタン-->
           <button type="button" class="btn btn-primary rounded-circle p-0" style="width:2rem;height:2rem;"
             id="cone_touch_minus" onclick="pressConeTouchMinus()">-</button>
+          <!--回数-->
           <div id="cone_touch_value">
             0
           </div>
+          <!--プラスのボタン-->
           <button type="button" class="btn btn-secondary rounded-circle p-0" style="width:2rem;height:2rem;"
             id="cone_touch_plus" onclick="pressConeTouchPlus()">+</button>
         </div>
