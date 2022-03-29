@@ -173,7 +173,13 @@
 	justify-self: center;
 }
 
-#gap {
+#gap1 {
+	display: flex;
+	align-items: center;
+	justify-self: center;
+}
+
+#gap2 {
 	display: flex;
 	align-items: center;
 	justify-self: center;

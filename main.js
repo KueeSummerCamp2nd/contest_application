@@ -18,6 +18,13 @@ var bonusElementsList = [];
 // よく分かってない部分もありながら実装したのでご了承ください．
 var timerId;
 
+const ConeTouchPenaltySecond = 1;
+const ConeOverPenaltySecond = 2;
+const BatonSuccessBonusSecond = 10;
+const StopSuccessBonusSecond = 10;
+const GapSuccessBonusSecond = 3;
+const noRestartSuccessBonusSecond = 5;
+
 
 class BonusElements {
   constructor() {
@@ -25,10 +32,9 @@ class BonusElements {
     this.coneOverValue = 0;
     this.batonPass1 = ""; // stringで"Failed", "Success"
     this.stop1 = ""; // stringで"Failed", "Success"
-    this.batonPass2 = "";
+    this.gap1 = "";
     this.stop2 = "";
     this.noRestart = "";
-    this.gap1 = "";
     this.gap2 = "";
     this.bonusSecond = 0;
   }
@@ -37,74 +43,47 @@ class BonusElements {
     this.coneOverValue = 0;
     this.batonPass1 = "";
     this.stop1 = "";
-    this.batonPass2 = "";
+    this.gap1 = "";
     this.stop2 = "";
     this.noRestart = "";
-    this.gap1 = "";
     this.gap2 = "";
     this.bonusSecond = 0;
     this.updateBonusSecond();
   }
   returnElementsToArray() {
-    return [this.coneTouchValue, this.coneOverValue, this.batonPass1, this.stop1, this.batonPass2, this.stop2, this.noRestart, this.gap1, this.gap2];
+    return [this.coneTouchValue, this.coneOverValue, this.batonPass1, this.stop1, this.gap1, this.stop2, this.noRestart, this.gap2];
   }
 
   updateBonusSecond() {
     var bonusSecond = 0;
-    // 区画ごとのパネル変更のボーナス．
-    if (this.section1Option == "Nothing") {} else if (this.section1Option == "RightReverse") {
-      bonusSecond -= 5;
-    } else if (this.section1Option == "RightNormal") {
-      bonusSecond -= 3;
-    } else if (this.section1Option == "CurveReverse") {
-      bonusSecond -= 10;
-    } else if (this.section1Option == "CurveNormal") {
-      bonusSecond -= 5;
-    }
-    if (this.section2Option == "Nothing") {} else if (this.section2Option == "RightReverse") {
-      bonusSecond -= 5;
-    } else if (this.section2Option == "RightNormal") {
-      bonusSecond -= 3;
-    } else if (this.section2Option == "CurveReverse") {
-      bonusSecond -= 10;
-    } else if (this.section2Option == "CurveNormal") {
-      bonusSecond -= 5;
-    }
-    if (this.section3Option == "Nothing") {} else if (this.section3Option == "RightReverse") {
-      bonusSecond -= 5;
-    } else if (this.section3Option == "RightNormal") {
-      bonusSecond -= 3;
-    } else if (this.section3Option == "CurveReverse") {
-      bonusSecond -= 10;
-    } else if (this.section3Option == "CurveNormal") {
-      bonusSecond -= 5;
-    }
 
     // コーンに触れた回数・倒した回数のペナルティ
-    bonusSecond += 3 * this.coneTouchValue;
-    bonusSecond += 5 * this.coneOverValue;
+    bonusSecond += ConeTouchPenaltySecond * this.coneTouchValue;
+    bonusSecond += ConeOverPenaltySecond * this.coneOverValue;
 
     // 1回目のバトンパスボーナス
-    if (this.batonPass1 == "Failed") {} else if (this.batonPass1 == "SmallSuccess") {
-      bonusSecond -= 5;
-    } else if (this.batonPass1 == "BigSuccess") {
-      bonusSecond -= 25;
+    if (this.batonPass1 == "Failed") {} else if (this.batonPass1 == "Success") {
+      bonusSecond -= BatonSuccessBonusSecond;
     }
     if (this.stop1 == "Failed") {} else if (this.stop1 == "Success") {
-      bonusSecond -= 10;
+      bonusSecond -= StopSuccessBonusSecond;
+    }
+    // 1回目のギャップタイルボーナス
+    if (this.gap1 == "Failed") {} else if (this.gap1 == "Success") {
+      bonusSecond -= GapSuccessBonusSecond;
     }
 
-    // 2回目のバトンパスボーナス
-    if (this.batonPass2 == "Failed") {} else if (this.batonPass2 == "Success") {
-      bonusSecond -= 10;
-    } 
+    // 2回目の停止ボーナス
     if (this.stop2 == "Failed") {} else if (this.stop2 == "Success") {
-      bonusSecond -= 10;
+      bonusSecond -= StopSuccessBonusSecond;
     }
-
-    // 3回目のバトンパスボーナス
-    if (this.stop3 == "Failed") {} else if (this.stop3 == "Success") {
-      bonusSecond -= 10;
+    // カーブ区間のリスタートのボーナス
+    if (this.noRestart == "Failed") {} else if (this.noRestart == "Success") {
+      bonusSecond -= noRestartSuccessBonusSecond;
+    }
+    // 2回目のギャップタイルボーナス
+    if (this.gap2 == "Failed") {} else if (this.gap2 == "Success") {
+      bonusSecond -= GapSuccessBonusSecond;
     }
 
     this.bonusSecond = bonusSecond;
@@ -113,8 +92,6 @@ class BonusElements {
     // なんでこの処理をここでやってるのかは...忘れました
     document.getElementById("cone_touch_value").innerText = String(this.coneTouchValue);
     document.getElementById("cone_over_value").innerText = String(this.coneOverValue);
-    document.getElementById("response_light_value").innerText = String(this.responseLightValue);
-    document.getElementById("response_music_value").innerText = String(this.responseMusicValue);
 
     // ボーナス点を加算して時刻を表示
     drawTime();
@@ -179,13 +156,13 @@ function pressStop2(optionValue) {
   bonusElementsList[racingTeamIndex].updateBonusSecond();
 }
 
-function pressRestart(optionValue) {
+function pressNoRestart(optionValue) {
   bonusElementsList[racingTeamIndex].noRestart = optionValue;
   bonusElementsList[racingTeamIndex].updateBonusSecond();
 }
 
 function pressGap1(optionValue) {
-  bonusElementsList[racingTeamIndex].gap2 = optionValue;
+  bonusElementsList[racingTeamIndex].gap1 = optionValue;
   bonusElementsList[racingTeamIndex].updateBonusSecond();
 }
 
