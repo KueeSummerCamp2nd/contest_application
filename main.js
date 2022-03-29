@@ -21,39 +21,32 @@ var timerId;
 
 class BonusElements {
   constructor() {
-    this.section1Option = "";
-    // stringで"Nothing", "RightReverse", "RightNormal", "CurveReverse", "CurveNormal"のいずれかとする
-    //つまりhtmlのsection1_optionYのYに対応．クラス作ったほうが良かったかも...
-    this.section2Option = "";
-    this.section3Option = "";
     this.coneTouchValue = 0; //int
     this.coneOverValue = 0;
-    this.batonPass1 = ""; // stringで"Failed", "SmallSuccess", "BigSuccess"のいずれか
+    this.batonPass1 = ""; // stringで"Failed", "Success"
     this.stop1 = ""; // stringで"Failed", "Success"
-    this.responseLightValue = 0;
-    this.responseMusicValue = 0;
     this.batonPass2 = "";
     this.stop2 = "";
-    this.stop3 = "";
+    this.noRestart = "";
+    this.gap1 = "";
+    this.gap2 = "";
     this.bonusSecond = 0;
   }
   initialize() {
-    this.section1Option = "";
-    this.section2Option = "";
-    this.section3Option = "";
     this.coneTouchValue = 0;
     this.coneOverValue = 0;
     this.batonPass1 = "";
     this.stop1 = "";
-    this.responseLightValue = 0;
-    this.responseMusicValue = 0;
     this.batonPass2 = "";
     this.stop2 = "";
-    this.stop3 = "";
+    this.noRestart = "";
+    this.gap1 = "";
+    this.gap2 = "";
+    this.bonusSecond = 0;
     this.updateBonusSecond();
   }
   returnElementsToArray() {
-    return [this.section1Option, this.section2Option, this.section3Option, this.coneTouchValue, this.coneOverValue, this.batonPass1, this.stop1, this.responseLightValue, this.responseMusicValue, this.batonPass2, this.stop2, this.stop3];
+    return [this.coneTouchValue, this.coneOverValue, this.batonPass1, this.stop1, this.batonPass2, this.stop2, this.noRestart, this.gap1, this.gap2];
   }
 
   updateBonusSecond() {
@@ -101,16 +94,10 @@ class BonusElements {
       bonusSecond -= 10;
     }
 
-    // アクション区間のボーナス
-    bonusSecond -= 5 * this.responseLightValue;
-    bonusSecond -= 10 * this.responseMusicValue;
-
     // 2回目のバトンパスボーナス
-    if (this.batonPass2 == "Failed") {} else if (this.batonPass2 == "SmallSuccess") {
-      bonusSecond -= 5;
-    } else if (this.batonPass2 == "BigSuccess") {
-      bonusSecond -= 25;
-    }
+    if (this.batonPass2 == "Failed") {} else if (this.batonPass2 == "Success") {
+      bonusSecond -= 10;
+    } 
     if (this.stop2 == "Failed") {} else if (this.stop2 == "Success") {
       bonusSecond -= 10;
     }
@@ -135,80 +122,20 @@ class BonusElements {
 }
 
 // ここから地獄のように関数を定義
-// というのも各ボタンに1つずつ関数を割り当ててるため．
+// というのも各セクションに1つずつ関数を割り当ててるため．
 // 改善求む
-function pressSection1Option0() {
-  bonusElementsList[racingTeamIndex].section1Option = "Nothing";
+function pressSection1Option(optionValue) {
+  bonusElementsList[racingTeamIndex].section1Option = optionValue;
   bonusElementsList[racingTeamIndex].updateBonusSecond();
 }
 
-function pressSection1Option1() {
-  bonusElementsList[racingTeamIndex].section1Option = "RightReverse";
+function pressSection2Option(optionValue) {
+  bonusElementsList[racingTeamIndex].section2Option = optionValue;
   bonusElementsList[racingTeamIndex].updateBonusSecond();
 }
 
-function pressSection1Option2() {
-  bonusElementsList[racingTeamIndex].section1Option = "RightNormal";
-  bonusElementsList[racingTeamIndex].updateBonusSecond();
-}
-
-function pressSection1Option3() {
-  bonusElementsList[racingTeamIndex].section1Option = "CurveReverse";
-  bonusElementsList[racingTeamIndex].updateBonusSecond();
-}
-
-function pressSection1Option4() {
-  bonusElementsList[racingTeamIndex].section1Option = "CurveNormal";
-  bonusElementsList[racingTeamIndex].updateBonusSecond();
-}
-
-function pressSection2Option0() {
-  bonusElementsList[racingTeamIndex].section2Option = "Nothing";
-  bonusElementsList[racingTeamIndex].updateBonusSecond();
-}
-
-function pressSection2Option1() {
-  bonusElementsList[racingTeamIndex].section2Option = "RightReverse";
-  bonusElementsList[racingTeamIndex].updateBonusSecond();
-}
-
-function pressSection2Option2() {
-  bonusElementsList[racingTeamIndex].section2Option = "RightNormal";
-  bonusElementsList[racingTeamIndex].updateBonusSecond();
-}
-
-function pressSection2Option3() {
-  bonusElementsList[racingTeamIndex].section2Option = "CurveReverse";
-  bonusElementsList[racingTeamIndex].updateBonusSecond();
-}
-
-function pressSection2Option4() {
-  bonusElementsList[racingTeamIndex].section2Option = "CurveNormal";
-  bonusElementsList[racingTeamIndex].updateBonusSecond();
-}
-
-function pressSection3Option0() {
-  bonusElementsList[racingTeamIndex].section3Option = "Nothing";
-  bonusElementsList[racingTeamIndex].updateBonusSecond();
-}
-
-function pressSection3Option1() {
-  bonusElementsList[racingTeamIndex].section3Option = "RightReverse";
-  bonusElementsList[racingTeamIndex].updateBonusSecond();
-}
-
-function pressSection3Option2() {
-  bonusElementsList[racingTeamIndex].section3Option = "RightNormal";
-  bonusElementsList[racingTeamIndex].updateBonusSecond();
-}
-
-function pressSection3Option3() {
-  bonusElementsList[racingTeamIndex].section3Option = "CurveReverse";
-  bonusElementsList[racingTeamIndex].updateBonusSecond();
-}
-
-function pressSection3Option4() {
-  bonusElementsList[racingTeamIndex].section3Option = "CurveNormal";
+function pressSection3Option(optionValue) {
+  bonusElementsList[racingTeamIndex].section3Option = optionValue;
   bonusElementsList[racingTeamIndex].updateBonusSecond();
 }
 
@@ -236,87 +163,34 @@ function pressConeOverPlus() {
   bonusElementsList[racingTeamIndex].updateBonusSecond();
 }
 
-function pressBatonpass1Failed() {
-  bonusElementsList[racingTeamIndex].batonPass1 = "Failed";
+function pressBatonpass1(optionValue) {
+  bonusElementsList[racingTeamIndex].batonPass1 = optionValue;
   bonusElementsList[racingTeamIndex].updateBonusSecond();
 }
 
-function pressBatonpass1SmallSuccess() {
-  bonusElementsList[racingTeamIndex].batonPass1 = "SmallSuccess";
+function pressStop1(optionValue) {
+  bonusElementsList[racingTeamIndex].stop1 = optionValue;
   bonusElementsList[racingTeamIndex].updateBonusSecond();
 }
 
-function pressBatonpass1BigSuccess() {
-  bonusElementsList[racingTeamIndex].batonPass1 = "BigSuccess";
+
+function pressStop2(optionValue) {
+  bonusElementsList[racingTeamIndex].stop2 = optionValue;
   bonusElementsList[racingTeamIndex].updateBonusSecond();
 }
 
-function pressStop1Failed() {
-  bonusElementsList[racingTeamIndex].stop1 = "Failed";
+function pressRestart(optionValue) {
+  bonusElementsList[racingTeamIndex].noRestart = optionValue;
   bonusElementsList[racingTeamIndex].updateBonusSecond();
 }
 
-function pressStop1Success() {
-  bonusElementsList[racingTeamIndex].stop1 = "Success";
+function pressGap1(optionValue) {
+  bonusElementsList[racingTeamIndex].gap2 = optionValue;
   bonusElementsList[racingTeamIndex].updateBonusSecond();
 }
 
-function pressResponseLightMinus() {
-  if (bonusElementsList[racingTeamIndex].responseLightValue > 0) {
-    bonusElementsList[racingTeamIndex].responseLightValue -= 1;
-    bonusElementsList[racingTeamIndex].updateBonusSecond();
-  }
-}
-
-function pressResponseLightPlus() {
-  bonusElementsList[racingTeamIndex].responseLightValue += 1;
-  bonusElementsList[racingTeamIndex].updateBonusSecond();
-}
-
-function pressResponseMusicMinus() {
-  if (bonusElementsList[racingTeamIndex].responseMusicValue > 0) {
-    bonusElementsList[racingTeamIndex].responseMusicValue -= 1;
-    bonusElementsList[racingTeamIndex].updateBonusSecond();
-  }
-}
-
-function pressResponseMusicPlus() {
-  bonusElementsList[racingTeamIndex].responseMusicValue += 1;
-  bonusElementsList[racingTeamIndex].updateBonusSecond();
-}
-
-function pressBatonpass2Failed() {
-  bonusElementsList[racingTeamIndex].batonPass2 = "Failed";
-  bonusElementsList[racingTeamIndex].updateBonusSecond();
-}
-
-function pressBatonpass2SmallSuccess() {
-  bonusElementsList[racingTeamIndex].batonPass2 = "SmallSuccess";
-  bonusElementsList[racingTeamIndex].updateBonusSecond();
-}
-
-function pressBatonpass2BigSuccess() {
-  bonusElementsList[racingTeamIndex].batonPass2 = "BigSuccess";
-  bonusElementsList[racingTeamIndex].updateBonusSecond();
-}
-
-function pressStop2Failed() {
-  bonusElementsList[racingTeamIndex].stop2 = "Failed";
-  bonusElementsList[racingTeamIndex].updateBonusSecond();
-}
-
-function pressStop2Success() {
-  bonusElementsList[racingTeamIndex].stop2 = "Success";
-  bonusElementsList[racingTeamIndex].updateBonusSecond();
-}
-
-function pressStop3Failed() {
-  bonusElementsList[racingTeamIndex].stop3 = "Failed";
-  bonusElementsList[racingTeamIndex].updateBonusSecond();
-}
-
-function pressStop3Success() {
-  bonusElementsList[racingTeamIndex].stop3 = "Success";
+function pressGap2(optionValue) {
+  bonusElementsList[racingTeamIndex].gap2 = optionValue;
   bonusElementsList[racingTeamIndex].updateBonusSecond();
 }
 // 地獄の関数定義ここまで

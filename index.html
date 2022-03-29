@@ -7,7 +7,7 @@
   <script src="main.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="css/bootstrap.css">
-  <title>2019年度 サマーキャンプ2回生</title>
+  <title>2021年度 サマーキャンプ2回生</title>
 </head>
 
 <body style="font-family:sans-serif">
@@ -50,84 +50,14 @@
 
     <!--ここから右側部分-->
     <div id="main_right">
-      <div id="section_option_block">
-        <div id="section1_option" class="btn-group btn-group-toggle" data-toggle="buttons">
-          <div>
-            Section 1
-          </div>
-          <!--どのセクション（X）でどのパネル(Y)を取り替えたかをsectionX_optionYで管理．
-            クリックされると関数pressSectionXOptionY()が実行．
-            変数をhtmlに書く方法が思いつかなかったので無理矢理このように実装しましたが，非効率的だと思うので誰か直してください...-->
-          <label class="btn btn-light btn-s" onclick="pressSection1Option0()">
-            <input type="radio" name="options" id="section1_option0" autocomplete="off">　入れ替えなし
-          </label>
-          <label class="btn btn-light btn-s" onclick="pressSection1Option1()">
-            <input type="radio" name="options" id="section1_option1" autocomplete="off"> 直線，反転
-          </label>
-          <label class="btn btn-light btn-s" onclick="pressSection1Option2()">
-            <input type="radio" name="options" id="section1_option2" autocomplete="off"> 直線，反転以外
-          </label>
-          <label class="btn btn-light btn-s" onclick="pressSection1Option3()">
-            <input type="radio" name="options" id="section1_option3" autocomplete="off"> 曲線，反転
-          </label>
-          <label class="btn btn-light btn-s" onclick="pressSection1Option4()">
-            <input type="radio" name="options" id="section1_option4" autocomplete="off"> 曲線，反転以外
-          </label>
-        </div>
-
-        <!--以下同じことをSection2，Section3でやる．
-            これ作るのに時間がなかったんです許してください-->
-        <div id="section2_option" class="btn-group btn-group-toggle" data-toggle="buttons">
-          <div>
-            Section 2
-          </div>
-          <label class="btn btn-light btn-s" onclick="pressSection2Option0()">
-            <input type="radio" name="options" id="section2_option0" autocomplete="off" checked>　入れ替えなし
-          </label>
-          <label class="btn btn-light btn-s" onclick="pressSection2Option1()">
-            <input type="radio" name="options" id="section2_option1" autocomplete="off"> 直線，反転
-          </label>
-          <label class="btn btn-light btn-s" onclick="pressSection2Option2()">
-            <input type="radio" name="options" id="section2_option2" autocomplete="off"> 直線，反転以外
-          </label>
-          <label class="btn btn-light btn-s" onclick="pressSection2Option3()">
-            <input type="radio" name="options" id="section2_option3" autocomplete="off"> 曲線，反転
-          </label>
-          <label class="btn btn-light btn-s" onclick="pressSection2Option4()">
-            <input type="radio" name="options" id="section2_option4" autocomplete="off"> 曲線，反転以外
-          </label>
-        </div>
-
-        <div id="section3_option" class="btn-group btn-group-toggle" data-toggle="buttons">
-          <div>
-            Section 3
-          </div>
-          <label class="btn btn-light btn-s" onclick="pressSection3Option0()">
-            <input type="radio" name="options" id="section3_option0" autocomplete="off" checked>　入れ替えなし
-          </label>
-          <label class="btn btn-light btn-s" onclick="pressSection3Option1()">
-            <input type="radio" name="options" id="section3_option1" autocomplete="off"> 直線，反転
-          </label>
-          <label class="btn btn-light btn-s" onclick="pressSection3Option2()">
-            <input type="radio" name="options" id="section3_option2" autocomplete="off"> 直線，反転以外
-          </label>
-          <label class="btn btn-light btn-s" onclick="pressSection3Option3()">
-            <input type="radio" name="options" id="section3_option3" autocomplete="off"> 曲線，反転
-          </label>
-          <label class="btn btn-light btn-s" onclick="pressSection3Option4()">
-            <input type="radio" name="options" id="section3_option4" autocomplete="off"> 曲線，反転以外
-          </label>
-        </div>
-      </div>
-
       <div id="section1_cone">
         <div id="section1_cone_title">
-          Section1：精度重視区間
+          Section1：障害物区間
         </div>
 
         <div id="cone_touch" class="section1_cone_main">
           <div>
-            ・コーンに触れた回数：
+            ・障害物に触れた回数：
           </div>
           <!--マイナスのボタン-->
           <button type="button" class="btn btn-primary rounded-circle p-0" style="width:2rem;height:2rem;"
@@ -142,7 +72,7 @@
         </div>
         <div id="cone_over" class="section1_cone_main">
           <div>
-            ・コーンを倒した回数：
+            ・障害物を倒した回数：
           </div>
           <button type="button" class="btn btn-primary rounded-circle p-0" style="width:2rem;height:2rem;"
             id="cone_over_minus" onclick="pressConeOverMinus()">-</button>
@@ -158,14 +88,11 @@
         <div>
           バトンパス（1回目）：
         </div>
-        <label class="btn btn-light btn-s" onclick="pressBatonpass1Failed()">
+        <label class="btn btn-light btn-s" onclick="pressBatonpass1('Failed')">
           <input type="radio" name="options" id="batonpass1_failed" autocomplete="off"> 失敗
         </label>
-        <label class="btn btn-light btn-s" onclick="pressBatonpass1SmallSuccess()">
-          <input type="radio" name="options" id="batonpass1_small_success" autocomplete="off"> 小成功
-        </label>
-        <label class="btn btn-light btn-s" onclick="pressBatonpass1BigSuccess()">
-          <input type="radio" name="options" id="batonpass1_big_success" autocomplete="off"> 大成功
+        <label class="btn btn-light btn-s" onclick="pressBatonpass1('Success')">
+          <input type="radio" name="options" id="batonpass1_small_success" autocomplete="off"> 成功
         </label>
       </div>
 
@@ -173,86 +100,61 @@
         <div>
           停止（1回目）：
         </div>
-        <label class="btn btn-light btn-s" onclick="pressStop1Failed()">
+        <label class="btn btn-light btn-s" onclick="pressStop1('Failed')">
           <input type="radio" name="options" id="stop1_failed" autocomplete="off"> 失敗
         </label>
-        <label class="btn btn-light btn-s" onclick="pressStop1Success()">
+        <label class="btn btn-light btn-s" onclick="pressStop1('Success')">
           <input type="radio" name="options" id="stop1_success" autocomplete="off"> 成功
         </label>
       </div>
-
-      <div id="section2_act">
-        <div id="section2_act_title">
-          Section2：アクション区間
-        </div>
-
-        <div id="response_light" class="section1_cone_main">
-          <div>
-            ・光で反応した回数：
-          </div>
-          <button type="button" class="btn btn-primary rounded-circle p-0" style="width:2rem;height:2rem;"
-            id="response_light_minus" onclick="pressResponseLightMinus()">-</button>
-          <div id="response_light_value">
-            0
-          </div>
-          <button type="button" class="btn btn-secondary rounded-circle p-0" style="width:2rem;height:2rem;"
-            id="response_light_plus" onclick="pressResponseLightPlus()">+</button>
-        </div>
-        <div id="response_music" class="section1_cone_main">
-          <div>
-            ・音で反応した回数：
-          </div>
-          <button type="button" class="btn btn-primary rounded-circle p-0" style="width:2rem;height:2rem;"
-            id="response_music_minus" onclick="pressResponseMusicMinus()">-</button>
-          <div id="response_music_value">
-            0
-          </div>
-          <button type="button" class="btn btn-secondary rounded-circle p-0" style="width:2rem;height:2rem;"
-            id="response_music_plus" onclick="pressResponseMusicPlus()">+</button>
-        </div>
-      </div>
-
-      <div id="batonpass2" class="btn-group btn-group-toggle" data-toggle="buttons">
+      <div id="gap" class="btn-group btn-group-toggle" data-toggle="buttons">
         <div>
-          バトンパス（2回目）：
+          ギャップタイル：
         </div>
-        <label class="btn btn-light btn-s" onclick="pressBatonpass2Failed()">
-          <input type="radio" name="options" id="batonpass2_failed" autocomplete="off"> 失敗
+        <label class="btn btn-light btn-s" onclick="pressGap1('Failed')">
+          <input type="radio" name="options" id="gap1_failed" autocomplete="off"> なしor失敗
         </label>
-        <label class="btn btn-light btn-s" onclick="pressBatonpass2SmallSuccess()">
-          <input type="radio" name="options" id="batonpass2_small_success" autocomplete="off"> 小成功
-        </label>
-        <label class="btn btn-light btn-s" onclick="pressBatonpass2BigSuccess()">
-          <input type="radio" name="options" id="batonpass2_big_success" autocomplete="off"> 大成功
+        <label class="btn btn-light btn-s" onclick="pressgap1('Success')">
+          <input type="radio" name="options" id="gap1_success" autocomplete="off"> 成功
         </label>
       </div>
 
+      <div id="section2_curve">
+        <div id="section2_curve_title">
+          Section2：カーブ区間
+        </div>
+      </div>
       <div id="stop2" class="btn-group btn-group-toggle" data-toggle="buttons">
         <div>
           停止（2回目）：
         </div>
-        <label class="btn btn-light btn-s" onclick="pressStop2Failed()">
+        <label class="btn btn-light btn-s" onclick="pressStop2('Failed')">
           <input type="radio" name="options" id="stop2_failed" autocomplete="off"> 失敗
         </label>
-        <label class="btn btn-light btn-s" onclick="pressStop2Success()">
+        <label class="btn btn-light btn-s" onclick="pressStop2('Success')">
           <input type="radio" name="options" id="stop2_success" autocomplete="off"> 成功
         </label>
       </div>
-
-      <div id="section3_speed">
-        <div id="section3_speed_title">
-          Section3：速度重視区間
-        </div>
-      </div>
-      <div id="stop3" class="btn-group btn-group-toggle" data-toggle="buttons">
+      <div id="noRestart" class="btn-group btn-group-toggle" data-toggle="buttons">
         <div>
-          停止（3回目）：
+          リスタート：
         </div>
-        <label class="btn btn-light btn-s" onclick="pressStop3Failed()">
-          <input type="radio" name="options" id="stop3_failed" autocomplete="off"> 失敗
+        <label class="btn btn-light btn-s" onclick="pressNoRestart('Failed')">
+          <input type="radio" name="options" id="stop2_failed" autocomplete="off"> あり
         </label>
-        <label class="btn btn-light btn-s" onclick="pressStop3Success()">
-          <input type="radio" name="options" id="stop3_success" autocomplete="off"> 成功
+        <label class="btn btn-light btn-s" onclick="pressNoRestart('Success')">
+          <input type="radio" name="options" id="stop2_success" autocomplete="off"> なし
+        </label>
+      </div>
+      <div id="gap" class="btn-group btn-group-toggle" data-toggle="buttons">
+        <div>
+          ギャップタイル：
+        </div>
+        <label class="btn btn-light btn-s" onclick="pressGap2('Failed')">
+          <input type="radio" name="options" id="gap2_failed" autocomplete="off"> なしor失敗
+        </label>
+        <label class="btn btn-light btn-s" onclick="pressgap2('Success')">
+          <input type="radio" name="options" id="gap2_success" autocomplete="off"> 成功
         </label>
       </div>
     </div>

@@ -158,19 +158,25 @@
 	justify-content: center;
 }
 
-#section3_speed {
+#section2_curve {
 	padding-top: 15pt;
 }
 
-#section3_speed_title {
+#section2_curve_title {
 	font-size: 18pt;
 	font-weight: bold;
 }
 
-#stop3 {
+#noRestart {
 	display: flex;
 	align-items: center;
-	justify-content: center;
+	justify-self: center;
+}
+
+#gap {
+	display: flex;
+	align-items: center;
+	justify-self: center;
 }
 
 #bonus_episode {
