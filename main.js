@@ -20,10 +20,12 @@ var timerId;
 
 const ConeTouchPenaltySecond = 1;
 const ConeOverPenaltySecond = 2;
-const BatonSuccessBonusSecond = 10;
-const StopSuccessBonusSecond = 10;
+const BatonSuccessBonusSecond = 5;
+const StopSuccessBonusSecond = 5;
 const GapSuccessBonusSecond = 3;
 const noRestartSuccessBonusSecond = 5;
+const RetireSecond = 60;
+const RetirePenalytSecond = 5;
 
 
 class BonusElements {
@@ -101,21 +103,6 @@ class BonusElements {
 // ここから地獄のように関数を定義
 // というのも各セクションに1つずつ関数を割り当ててるため．
 // 改善求む
-function pressSection1Option(optionValue) {
-  bonusElementsList[racingTeamIndex].section1Option = optionValue;
-  bonusElementsList[racingTeamIndex].updateBonusSecond();
-}
-
-function pressSection2Option(optionValue) {
-  bonusElementsList[racingTeamIndex].section2Option = optionValue;
-  bonusElementsList[racingTeamIndex].updateBonusSecond();
-}
-
-function pressSection3Option(optionValue) {
-  bonusElementsList[racingTeamIndex].section3Option = optionValue;
-  bonusElementsList[racingTeamIndex].updateBonusSecond();
-}
-
 function pressConeTouchMinus() {
   if (bonusElementsList[racingTeamIndex].coneTouchValue > 0) {
     bonusElementsList[racingTeamIndex].coneTouchValue -= 1;
@@ -375,18 +362,14 @@ function initialSetUp() {
   for (var i = 0; i < teamNumber; i++) {
     var bonusElementsTeamI = new BonusElements();
     if (stateData.length) {
-      bonusElementsTeamI.section1Option = stateData[i][0];
-      bonusElementsTeamI.section2Option = stateData[i][1];
-      bonusElementsTeamI.section3Option = stateData[i][2];
-      bonusElementsTeamI.coneTouchValue = Number(stateData[i][3]);
-      bonusElementsTeamI.coneOverValue = Number(stateData[i][4]);
+      bonusElementsTeamI.coneTouchValue = Number(stateData[i][0]);
+      bonusElementsTeamI.coneOverValue = Number(stateData[i][1]);
       bonusElementsTeamI.batonPass1 = stateData[i][5];
       bonusElementsTeamI.stop1 = stateData[i][6];
-      bonusElementsTeamI.responseLightValue = Number(stateData[i][7]);
-      bonusElementsTeamI.responseMusicValue = Number(stateData[i][8]);
-      bonusElementsTeamI.batonPass2 = stateData[i][9];
-      bonusElementsTeamI.stop2 = stateData[i][10];
-      bonusElementsTeamI.stop3 = stateData[i][11];
+      bonusElementsTeamI.gap1 = stateData[i][7];
+      bonusElementsTeamI.stop2 = stateData[i][8];
+      bonusElementsTeamI.noRestart = stateData[i][9];
+      bonusElementsTeamI.gap2 = stateData[i][10]
     }
     bonusElementsList.push(bonusElementsTeamI);
   }
@@ -543,12 +526,12 @@ function handleKeydown(event) {
     // aキー．これはリタイアしたときに押す
     if (nowRacing) {
       var nowTime = new Date().getTime();
-      // 1セクションあたりの最大時間は90秒とする
-      // 90秒以内にリタイアしたなら，その差分をペナルティとする
+      // 1セクションあたりの最大時間は60秒とする
+      // 60秒以内にリタイアしたなら，その差分をペナルティとする
       // 実装としては，これまでのプレイヤーのスタート時間からペナルティ分を引く
-      var sectionLimit = 90 * 1000;
+      var sectionLimit = RetireSecond * 1000;
       if (nowTime - batonPassTimeList[racingTeamIndex][racingRunnerIndex] < sectionLimit) {
-        var penalty = sectionLimit - (nowTime - batonPassTimeList[racingTeamIndex][racingRunnerIndex]);
+        var penalty = sectionLimit - (nowTime - batonPassTimeList[racingTeamIndex][racingRunnerIndex]) + RetirePenalytSecond;
         for (var i = 0; i < runnerNumber; i++) {
           if (batonPassTimeList[racingTeamIndex][i] != void 0) {
             batonPassTimeList[racingTeamIndex][i] -= penalty;
