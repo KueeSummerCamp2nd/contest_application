@@ -18,6 +18,12 @@ var bonusElementsList = [];
 // よく分かってない部分もありながら実装したのでご了承ください．
 var timerId;
 
+// ストップウォッチのストップフラグ
+var stopSpaceFlag = false;
+var startTime = 0;
+var stopTime = 0;
+var stopAllLength = [];
+
 const ConeTouchPenaltySecond = 1;
 const ConeOverPenaltySecond = 2;
 const BatonSuccessBonusSecond = 5;
@@ -174,6 +180,8 @@ function switchTab(teamIndex) {
     document.getElementById("team_name").innerText = teamNameList[teamIndex];
     switchRunner();
     drawTime();
+
+    // タブを変更したときに選択していたものをいったん消したい
   } else {
     document.getElementById("tab" + String(racingTeamIndex + 1)).checked = true;
   }
@@ -226,7 +234,8 @@ function drawTime() {
   if (batonPassTimeList[racingTeamIndex][runnerNumber] != void 0) {
     // batonPassTimeList[racingTeamIndex][runnerNumber]は，runnerNumber + 1番目のセクションが終了すると埋まる
     // 埋まってれば，時刻を測る必要ない
-    nowTime = batonPassTimeList[racingTeamIndex][runnerNumber];
+    nowTime = batonPassTimeList[racingTeamIndex][runnerNumber] - stopAllLength[racingRunnerIndex][runnerNumber];
+    console.log(stopAllLength[racingRunnerIndex][runnerNumber])
   } else {
     nowTime = new Date().getTime();
   }
@@ -349,6 +358,29 @@ function initialSetUp() {
     // なかったなら，batonPassTimeListを初期化
     for (var i = 0; i < teamNumber; i++) {
       batonPassTimeList.push(new Array(runnerNumber + 1));
+    }
+  }
+
+  var stoptimeData = csvToArray("data/result_stoptime.csv");
+  if (stoptimeData.length) {
+    // csvファイルが存在したなら，そのcsvファイルからbatonPassTimeListを復旧
+    for (var i = 0; i < teamNumber; i++) {
+      var stopTimeTeamI = [];
+      for (var j = 0; j < runnerNumber + 1; j++) {
+        if (timeData[i][j] == "") {
+          stopAllLength.push(new Array(runnerNumber + 1).fill(0));
+          break
+        }
+        stopTimeTeamI.push(stoptimeData[i][j]);
+        if (j == runnerNumber) {
+          stopAllLength.push(stopTimeTeamI);
+        }
+      }
+    }
+  } else {
+    // なかったなら，batonPassTimeListを初期化
+    for (var i = 0; i < teamNumber; i++) {
+      stopAllLength.push(new Array(runnerNumber + 1).fill(0));
     }
   }
 
@@ -558,6 +590,7 @@ function handleKeydown(event) {
       }
       downloadArrayToCSV(arr, "result_state.csv");
       downloadArrayToCSV(batonPassTimeList, "result_time.csv");
+      downloadArrayToCSV(stopAllLength, "result_stoptime.csv")
     }
   } else if (keyCode == 27) {
     // escキー．当画面の結果を削除したいときに押す
@@ -574,6 +607,20 @@ function handleKeydown(event) {
       batonPassTimeList[racingTeamIndex][racingRunnerIndex] = undefined;
       racingRunnerIndex -= 1;
       switchRunner();
+    }
+  } else if (keyCode == 32) {
+    if (stopSpaceFlag) {
+      startStopWatch();
+      startTime = new Date().getTime();
+      stopAllLength[racingTeamIndex][racingRunnerIndex] += startTime - stopTime;
+      console.log(startTime-stopTime);
+      console.log(stopAllLength[racingRunnerIndex][runnerNumber]);
+      stopSpaceFlag = false;
+    }
+    else {
+      stopStopWatch();
+      stopTime = new Date().getTime();
+      stopSpaceFlag = true;
     }
   }
 }
